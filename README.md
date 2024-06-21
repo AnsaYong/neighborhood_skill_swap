@@ -4,7 +4,7 @@
 The Neighborhood Skill Swap platform aims to facilitate skill exchange among neighbors. Users can offer their skills (e.g., language tutoring, gardening) and receive services in return (e.g., home repair, cooking classes). The platform uses a time-based credit system where users earn credits for the time they spend offering a skill, which they can then use to receive services from others.
 
 
-## Key Fatures
+## Key Features
 
 ### User Registration and Authentication:
 
@@ -65,7 +65,7 @@ The Neighborhood Skill Swap platform aims to facilitate skill exchange among nei
 
 ### Database:
 
-- MySQL or MongoDB
+- PostgreSQL
 
 ## Setup and Installation
 
