@@ -4,15 +4,21 @@ from django.db import models
 
 # Create your models here.
 class CustomUser(AbstractUser):
+    location = models.CharField(
+        max_length=255, blank=True
+    )  # Information about where the user is located (could be a city, region, or specific address)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(
+        CustomUser, on_delete=models.CASCADE, related_name="profile"
+    )  # A one-to-one link to the user model
     profile_image = models.ImageField(
         upload_to="profile_images/", null=True, blank=True
     )  # A field to upload a profile image
     bio = models.TextField(
         max_length=500, blank=True
     )  # A short biography or description about the user.
-    location = models.CharField(
-        max_length=255, blank=True
-    )  # Information about where the user is located (could be a city, region, or specific address)
     phone_number = models.CharField(
         max_length=20, blank=True
     )  # A phone number for contact purposes
@@ -27,4 +33,4 @@ class CustomUser(AbstractUser):
     )  # Field to store the number of credits a user has
 
     def __str__(self):
-        return self.username
+        return self.user.username
