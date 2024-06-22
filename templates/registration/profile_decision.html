@@ -1,0 +1,6 @@
+<h2>Would you like to create a profile?</h2>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="create_profile">Yes</button>
+    <button type="submit" name="skip_profile">No</button>
+</form>

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ profile.user.username }}'s Profile</h1>
+{% if profile.profile_image %}
+    <img src="{{ profile.profile_image.url }}" alt="Profile Image">
+{% else %}
+    <p>No profile image</p>
+{% endif %}
+<p><strong>Bio:</strong> {{ profile.bio }}</p>
+<p><strong>Location:</strong> {{ profile.user.location }}</p>
+<p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
+<p><strong>Skills Offered:</strong> {{ profile.skills_offered }}</p>
+<p><strong>Availability:</strong> {{ profile.availability }}</p>
+<p><strong>Credits:</strong> {{ profile.credits }}</p>
+{% endblock %}
