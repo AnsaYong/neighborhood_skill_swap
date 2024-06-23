@@ -2,8 +2,8 @@
 .venv
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
-*.pyc
+**/__pycache__/
+**/*.pyc
 
 # Other
 .DS_Store
