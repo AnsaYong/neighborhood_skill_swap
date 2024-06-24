@@ -1,4 +1,10 @@
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    UpdateView,
+    DeleteView,
+    CreateView,
+)
 from django.urls import reverse_lazy
 from .models import Skill
 
@@ -61,4 +67,26 @@ class SkillDeleteView(DeleteView):
     model = Skill
     template_name = "skills/skill_delete.html"
     success_url = reverse_lazy("skill_list")
+    context_object_name = "skill"
+
+
+class SkillCreateView(CreateView):
+    """A view to create a new skill.
+
+    Attributes:
+        model: A model to represent the skills.
+        fields: A tuple to represent the fields that can be edited.
+        template_name: A string to represent the template file.
+        context_object_name: A string to represent the context object name.
+    """
+
+    model = Skill
+    fields = (
+        "name",
+        "category",
+        "Level",
+        "description",
+        "owner",
+    )
+    template_name = "skills/skill_create.html"
     context_object_name = "skill"
