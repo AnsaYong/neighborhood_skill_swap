@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
+{% block title %}My Skills{% endblock %}
+
 {% block content %}
-<h1>Available Skills</h1>
-<ul>
-    {% for skill in skills %}
-        <li>
-            <a href="{% url 'skill_detail' skill.id %}">{{ skill.name }}</a>
-            <p>{{ skill.owner }}</p>
-        </li>
-    {% endfor %}
-</ul>
+{% for skill in skills %}
+<div class="card">
+    <div class="card-body">
+        <a href="{% url 'skill_detail' skill.id %}">{{ skill.name }}</a>
+        <span class="text-muted">{{ skill.date }}</span>
+    </div>
+</div>
+<br />
+{% endfor %}
 {% endblock %}

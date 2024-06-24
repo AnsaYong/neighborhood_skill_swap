@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3rd party apps
+    "crispy_forms",
+    "crispy_bootstrap5",
     # Local apps
     "accounts.apps.AccountsConfig",
     "skills.apps.SkillsConfig",
@@ -135,3 +138,7 @@ AUTH_USER_MODEL = "accounts.CustomUser"
 # Redirect to user profile after login and to landing page after logout
 LOGIN_REDIRECT_URL = "/"
 # LOGOUT_REDIRECT_URL = "landing-page"
+
+# Crispy forms
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

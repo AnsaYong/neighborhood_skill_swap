@@ -1,5 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Profile{% endblock %}
+
+{% block content %}
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save Profile</button>
 </form>
+{% endblock %}

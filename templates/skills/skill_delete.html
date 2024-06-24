@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ skill.name }}{% endblock %}
+
+{% block content %}
+<h1>Delete</h1>
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete "{{ skill.name }}"?</p>
+    <button type="submit" class="btn btn-danger ml-2">Delete</button>
+    <a href="{% url 'skills.detail' skill_id=skill.id %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
