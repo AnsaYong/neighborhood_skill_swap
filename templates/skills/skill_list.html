@@ -6,7 +6,7 @@
 {% for skill in skills %}
 <div class="card">
     <div class="card-body">
-        <a href="{% url 'skill_detail' skill.id %}">{{ skill.name }}</a>
+        <a href="{% url 'skill_detail' skill.pk %}">{{ skill.name }}</a>
         <span class="text-muted">{{ skill.date }}</span>
     </div>
 </div>

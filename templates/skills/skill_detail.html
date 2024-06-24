@@ -12,9 +12,9 @@
 
 <div class="skill-detail-actions">
     <p>
-        <a href="{{ url_for('skills.edit', skill_id=skill.id) }}" class="btn btn-primary">Edit</a> |
-        <a href="{{ url_for('skills.delete', skill_id=skill.id) }}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'skill_edit' skill.pk %}" class="btn btn-primary">Edit</a> |
+        <a href="{% url 'skill_delete' skill.pk %}" class="btn btn-danger">Delete</a>
     </p>
-    <p>Back to <a href="{% url ('skill_list') %}" class="btn btn-secondary">Skills</a>.</p>
+    <p>Back to <a href="{% url 'skill_list' %}" class="btn btn-secondary">Skills</a>.</p>
 </div>
 {% endblock %}

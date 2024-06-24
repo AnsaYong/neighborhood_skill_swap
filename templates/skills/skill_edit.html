@@ -9,6 +9,6 @@
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-info ml-2">Save</button>
-    <a href="{% url 'skills.detail' skill_id=skill.id %}" class="btn btn-secondary">Cancel</a>
+    <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-secondary">Cancel</a>
 </form>
 {% endblock %}
