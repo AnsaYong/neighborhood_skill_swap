@@ -49,12 +49,12 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ["username", "email", "location", "is_staff"]
+    list_display = ["username", "email", "age", "is_staff"]
     fieldsets = UserAdmin.fieldsets + (
-        (None, {"fields": ("location",)}),
+        (None, {"fields": ("age",)}),
     )  # Add the location field to fields used in editing users
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {"fields": ("location",)}),
+        (None, {"fields": ("age",)}),
     )  # Add the location field to fields listed during signup
     inlines = [UserProfileInline]
 
@@ -87,6 +87,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "bio",
+        "location",
         "phone_number",
         "skills_offered",
         "availability",

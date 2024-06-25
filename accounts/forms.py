@@ -18,7 +18,7 @@ class CustomUserCreationForm(UserCreationForm):
         """
 
         model = CustomUser
-        fields = UserCreationForm.Meta.fields + ("location",)
+        fields = UserCreationForm.Meta.fields + ("age",)
 
 
 class CustomUserChangeForm(UserChangeForm):
@@ -56,6 +56,7 @@ class UserProfileForm(forms.ModelForm):
         fields = [
             "profile_image",
             "bio",
+            "location",
             "phone_number",
             "skills_offered",
             "availability",
