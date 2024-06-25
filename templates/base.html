@@ -11,7 +11,7 @@
             {% if user.is_authenticated %}
                 <p>
                     <a href="{% url 'profile_update' user.id %}">Edit Profile</a> |
-                    <a href="{% url 'my_skills' %}">My Skills</a> |
+                    <a href="{% url 'skill_list' %}">My Skills</a> |
                     <a href="{% url 'logout' %}">Log out</a>
                 </p>
             {% endif %}

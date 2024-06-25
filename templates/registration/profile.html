@@ -16,4 +16,16 @@
 {% if user == request.user %}
     <a href="{% url 'skill_new' %}">Add Skill</a>
 {% endif %}
+
+<!-- View skills by search criteria -->
+<form action="{% url 'skill_search' %}" method="get">
+
+    <input type="text" name="search_term" placeholder="Search for a skill">
+    <button type="submit">Search</button>
+</form>
+
+<!-- View skill by category -->
+<a href="{% url 'skill_by_category' 'Pet' %}">Pet</a> | <a href="{% url 'skill_by_category' 'Test' %}">Test</a> |
+<a href="{% url 'skill_by_category' 'Music' %}">Music</a>
+
 {% endblock %}
