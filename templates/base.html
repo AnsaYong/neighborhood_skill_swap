@@ -6,9 +6,14 @@
     </head>
     <body>
         <main>
+            <h1>{{ user.username }}'s Profile</h1>
             {% block content %}{% endblock %}
             {% if user.is_authenticated %}
-                <a href="{% url 'logout' %}">Log out</a>
+                <p>
+                    <a href="{% url 'profile_update' user.id %}">Edit Profile</a> |
+                    <a href="{% url 'my_skills' %}">My Skills</a> |
+                    <a href="{% url 'logout' %}">Log out</a>
+                </p>
             {% endif %}
         </main>
     </body>

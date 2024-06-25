@@ -4,7 +4,7 @@ from django.contrib.auth import login, logout
 from .models import UserProfile, CustomUser
 from .forms import UserProfileForm, CustomUserCreationForm
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.views import LoginView
 
 
@@ -125,7 +125,9 @@ class ProfileCreateView(CreateView):
     template_name = "registration/profile_create.html"
 
     def dispatch(self, request, *args, **kwargs):
-        # Check if the user already has a profile
+        """Check if the user already has a profile and
+        redirect them if they do.
+        """
         if UserProfile.objects.filter(user=request.user).exists():
             return redirect(
                 reverse_lazy("profile", kwargs={"user_id": request.user.id})
@@ -168,7 +170,7 @@ class ProfileView(DetailView):
     context_object_name = "profile"
 
     def get_object(self):
-        """Get the user profile object.
+        """Get the user profile object to display on the user's profile page.
 
         Returns:
             UserProfile: The user profile object.
@@ -179,3 +181,43 @@ class ProfileView(DetailView):
             # Create a minimal user profile if one does not exist
             user = CustomUser.objects.get(id=self.kwargs["user_id"])
             return UserProfile.objects.create(user=user)
+
+
+class ProfileUpdateView(UpdateView):
+    """A class-based view to update a user profile.
+
+    Attributes:
+        model: The model to use in the view.
+        form_class: The form class to use in the view.
+        template_name: The name of the template to render.
+
+    Methods:
+        get_object: Get the user profile object.
+        get_success_url: Return the URL to redirect to after a successful form submission.
+    """
+
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = "registration/profile_update.html"
+
+    def get_object(self):
+        """Get the user profile object based on the user's id.
+
+        Returns:
+            UserProfile: The user profile object so that it can be updated.
+        """
+        return UserProfile.objects.get(user__id=self.kwargs["user_id"])
+
+    def form_valid(self, form):
+        """Handle file uploads when saving the form."""
+        if "profile_image" in form.files:
+            form.instance.profile_image = form.files["profile_image"]
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        """Return the URL to redirect to after a successful form submission.
+
+        Returns:
+            str: The URL to redirect to.
+        """
+        return reverse_lazy("profile", kwargs={"user_id": self.kwargs["user_id"]})
