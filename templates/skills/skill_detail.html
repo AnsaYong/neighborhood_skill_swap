@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ skill.name }}{% endblock %}
+
+{% block content %}
+<div class="skill-detail">
+    <h2>{{ skill.name }}</h2>
+    <p>Owner: {{ skill.owner }} | Level: {{ skill.level }} | Rating: {{ skill.rating }}</p>
+    <p>Category: {{ skill.category }}</p>
+    <p>{{ skill.description }}</p>
+</div>
+
+<div class="skill-detail-actions">
+    <p>
+        <a href="{% url 'skill_edit' skill.pk %}" class="btn btn-primary">Edit</a> |
+        <a href="{% url 'skill_delete' skill.pk %}" class="btn btn-danger">Delete</a>
+    </p>
+    <p>Back to <a href="{% url 'skill_list' %}" class="btn btn-secondary">Skills</a>.</p>
+</div>
+{% endblock %}
