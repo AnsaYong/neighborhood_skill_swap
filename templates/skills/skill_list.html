@@ -8,7 +8,8 @@
 <div class="card">
     <div class="card-body">
         <a href="{% url 'skill_detail' skill.pk %}">{{ skill.name }}</a>
-        <span class="text-muted">{{ skill.owner }}</span>
+        <p>{{ skill.owner }}</p>
+        <p>Skill type: {{ skill.skill_type }}</p>
     </div>
 </div>
 <br />

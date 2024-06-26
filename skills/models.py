@@ -56,6 +56,7 @@ class Skill(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+    skill_type = models.CharField(max_length=20, blank=False)
 
     def __str__(self):
         """Return a string representation of the skill."""

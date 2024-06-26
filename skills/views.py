@@ -45,9 +45,7 @@ class SkillListView(LoginRequiredMixin, ListView):
             kwargs: A dictionary of keyword arguments.
         """
         self.request_path = request.path
-        print(f"path in dispatch: {self.request_path}")
         self.category = kwargs.get("category", None)
-        print(f"category in dispatch: {self.category}")
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self) -> Skill:
@@ -87,7 +85,7 @@ class SkillListView(LoginRequiredMixin, ListView):
         return skillset
 
     def get_context_data(self, **kwargs: str) -> dict[str, str]:
-        """A method to adds a search form to the default context data
+        """A method to add a search form to the default context data
         so that users are able to search for specific skills.
 
         Returns:
@@ -184,6 +182,7 @@ class SkillDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class SkillCreateView(LoginRequiredMixin, CreateView):
     """A view to create a new skill by only logged in users.
+    The new skill_type is set automatically based on the request path.
 
     LoginRequiredMixin: A mixin to require the user to be logged in.
 
@@ -199,6 +198,18 @@ class SkillCreateView(LoginRequiredMixin, CreateView):
     template_name = "skills/skill_create.html"
     context_object_name = "skill"
 
+    def dispatch(self, request: HttpRequest, *args: str, **kwargs: str) -> HttpResponse:
+        """Overrides the dispatch method to differentiate the
+        request path.
+
+        Args:
+            request: An HttpRequest object.
+            args: A tuple of arguments.
+            kwargs: A dictionary of keyword arguments.
+        """
+        self.request_path = request.path
+        return super().dispatch(request, *args, **kwargs)
+
     def form_valid(self, form):
         """A method to set the owner of the skill, by default,
         to the current logged in user creating the skill.
@@ -209,5 +220,18 @@ class SkillCreateView(LoginRequiredMixin, CreateView):
         Returns:
             A response to the form.
         """
+        if self.request_path == "/skills/new/wanted/":
+            form.instance.skill_type = "wanted"
+        else:
+            form.instance.skill_type = "offered"
+
         form.instance.owner = self.request.user
         return super().form_valid(form)
+
+    def get_form(self, form_class=None):
+        """Customize the fields displayed by the form based on the URL."""
+        form = super().get_form(form_class)
+        if self.request_path == "/skills/new/wanted/":
+            form.fields.pop("Level")
+            form.fields.pop("description")
+        return form
