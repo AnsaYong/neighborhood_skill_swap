@@ -6,6 +6,7 @@ from .forms import UserProfileForm, CustomUserCreationForm
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 
 class CustomLoginView(LoginView):
@@ -78,7 +79,7 @@ class SignupView(View):
         return render(request, "registration/signup.html", {"form": form})
 
 
-class ProfileDecisionView(View):
+class ProfileDecisionView(UserPassesTestMixin, View):
     """A class-based view to get user to choose if they want to create
     a profile or not.
 
@@ -108,8 +109,15 @@ class ProfileDecisionView(View):
                 reverse_lazy("profile", kwargs={"user_id": request.user.id})
             )
 
+    def test_func(self) -> bool:
+        """Ensures only registered users can access the profile creation option.
 
-class ProfileCreateView(CreateView):
+        Returns:
+            bool: True if the user is authenticated, False otherwise."""
+        return self.request.user.is_authenticated
+
+
+class ProfileCreateView(UserPassesTestMixin, CreateView):
     """A class-based view to create a user profile.
 
     Attributes:
@@ -154,8 +162,15 @@ class ProfileCreateView(CreateView):
         """
         return reverse_lazy("profile", kwargs={"user_id": self.request.user.id})
 
+    def test_func(self) -> bool:
+        """Ensures only registered users can create a profile.
 
-class ProfileView(DetailView):
+        Returns:
+            bool: True if the user is authenticated, False otherwise."""
+        return self.request.user.is_authenticated
+
+
+class ProfileView(UserPassesTestMixin, DetailView):
     """A class-based view to display a user profile.
 
     Attributes:
@@ -181,6 +196,10 @@ class ProfileView(DetailView):
             # Create a minimal user profile if one does not exist
             user = CustomUser.objects.get(id=self.kwargs["user_id"])
             return UserProfile.objects.create(user=user)
+
+    def test_func(self) -> bool:
+        """Ensures registered users can only view their own profile."""
+        return self.request.user.id == self.kwargs["user_id"]
 
 
 class ProfileUpdateView(UpdateView):
