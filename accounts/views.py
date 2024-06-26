@@ -202,7 +202,7 @@ class ProfileView(UserPassesTestMixin, DetailView):
         return self.request.user.id == self.kwargs["user_id"]
 
 
-class ProfileUpdateView(UpdateView):
+class ProfileUpdateView(UserPassesTestMixin, UpdateView):
     """A class-based view to update a user profile.
 
     Attributes:
@@ -240,3 +240,7 @@ class ProfileUpdateView(UpdateView):
             str: The URL to redirect to.
         """
         return reverse_lazy("profile", kwargs={"user_id": self.kwargs["user_id"]})
+
+    def test_func(self) -> bool:
+        """Ensures registered users can only update their own profile."""
+        return self.request.user.id == self.kwargs["user_id"]
