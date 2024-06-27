@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from django.utils import timezone
 
 
 # Create your models here.
@@ -65,3 +66,65 @@ class Skill(models.Model):
     def get_absolute_url(self):
         """Return the absolute URL of the skill."""
         return reverse("skill_detail", kwargs={"pk": self.pk})
+
+    def deal_exists_for_user(self, user):
+        """Check if a deal request exists for the current user and skill."""
+        return SkillDeal.objects.filter(
+            skill=self, provider=user, status=SkillDeal.PENDING
+        ).exists()
+
+
+class SkillDeal(models.Model):
+    """A model to represent a skill deal.
+
+    Methods:
+        mark_complete: Mark the skill deal as completed and set the end date.
+        accept_deal: Accept the skill deal, set the start date, and set the status to active.
+
+    Attributes:
+        skill: A ForeignKey to represent the skill that is being dealt.
+        owner: A ForeignKey to represent the user who owns the skill deal (the user requesting).
+        provider: A ForeignKey to represent the user who owns the skill (the user who will provide).
+        status: A CharField to represent the status of the skill deal.
+        start_date: A DateTimeField to represent the date the skill deal was created.
+        end_date: A DateTimeField to represent the date the skill deal was completed.
+    """
+
+    PENDING = "pending"
+    ACTIVE = "active"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+    STATUS_CHOICES = [
+        (PENDING, "Pending"),
+        (ACTIVE, "Active"),
+        (COMPLETED, "Completed"),
+        (CANCELLED, "Cancelled"),
+    ]
+
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="owner"
+    )
+    provider = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="requester"
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
+    start_date = models.DateTimeField(null=True, blank=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        """Return a string representation of the skill deal."""
+        return f"{self.skill} - Request by {self.owner} - Provided by {self.provider}"
+
+    def mark_complete(self) -> None:
+        """Mark the skill deal as completed and set the end date."""
+        self.status = self.COMPLETED
+        self.end_date = timezone.now()
+        self.save()
+
+    def accept_deal(self) -> None:
+        """Accept the skill deal, set the start date, and set the status to active."""
+        self.status = self.ACTIVE
+        self.start_date = timezone.now()
+        self.save()

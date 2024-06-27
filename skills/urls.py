@@ -6,6 +6,12 @@ from .views import (
     SkillUpdateView,
     SkillDeleteView,
     SkillCreateView,
+    SkillDealCreateView,
+    SkillDealAcceptView,
+    SkillDealUpdateView,
+    SkillDealListView,
+    SkillDealDetailView,
+    SkillDealCompleteView,
 )
 
 urlpatterns = [
@@ -19,5 +25,21 @@ urlpatterns = [
     path("", SkillListView.as_view(), name="skill_list"),
     path(
         "categories/<str:category>/", SkillListView.as_view(), name="skill_by_category"
+    ),
+    path(
+        "deals/new/<int:skill_pk", SkillDealCreateView.as_view(), name="skill_deal_new"
+    ),
+    path(
+        "deals/accept/<int:deal_pk>",
+        SkillDealAcceptView.as_view(),
+        name="skill_deal_accept",
+    ),
+    path("deals/", SkillDealListView.as_view(), name="skill_deal_list"),
+    path("deals/<int:pk>/", SkillDealDetailView.as_view(), name="skill_deal_detail"),
+    path("deals/<int:pk>/edit/", SkillDealUpdateView.as_view(), name="skill_deal_edit"),
+    path(
+        "deals/<int:pk>/complete/",
+        SkillDealCompleteView.as_view(),
+        name="skill_deal_complete",
     ),
 ]

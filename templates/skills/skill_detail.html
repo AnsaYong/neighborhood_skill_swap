@@ -3,18 +3,40 @@
 {% block title %}{{ skill.name }}{% endblock %}
 
 {% block content %}
+<!-- Skill Details-->
 <div class="skill-detail">
-    <h2>{{ skill.name }}</h2>
-    <p>Owner: {{ skill.owner }} | Level: {{ skill.level }} | Rating: {{ skill.rating }}</p>
+    <h1>{{ skill.name }}</h1>
+    <p>Owner: {{ skill.owner }} | Level: {{ skill.Level }}</p>
     <p>Category: {{ skill.category }}</p>
     <p>{{ skill.description }}</p>
 </div>
 
+<!-- Skill Actions-->
+<div class="skill-detail-actions">
+    <!-- Show link to request a Skill Deal (only for when user is not the Skill owner)-->
+    {% if user != skill.owner %}
+        <p>
+            <a href="{% url 'skill_deal_new' skill.pk %}" class="btn btn-primary">Request Deal</a>
+        </p>
+    {% endif %}
+
+    <!-- Show accept/reject links if user is the skill owner and a deal exists -->
+    {% if user == skill.owner and deal_exists %}
+        <p>
+            <a href="{% url 'skill_deal_accept' pending_deal.pk %}" class="btn btn-primary">Accept Deal</a> |
+            <a href="#" class="btn btn-danger">Reject Deal</a>
+        </p>
+    {% endif %}
+</div>
+
+<!-- More skill Actions-->
 <div class="skill-detail-actions">
     <p>
         <a href="{% url 'skill_edit' skill.pk %}" class="btn btn-primary">Edit</a> |
         <a href="{% url 'skill_delete' skill.pk %}" class="btn btn-danger">Delete</a>
     </p>
-    <p>Back to <a href="{% url 'skill_list' %}" class="btn btn-secondary">Skills</a>.</p>
 </div>
+
+<!-- Other actions -->
+<p>Back to <a href="{% url 'skill_list' %}" class="btn btn-secondary">Skills</a>.</p>
 {% endblock %}
