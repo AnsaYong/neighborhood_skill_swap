@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ skill_deal.skill.name }} Deal Detail{% endblock %}
+
+{% block content %}
+<div class="deal-details">
+    <h2>Skill Deal Details</h2>
+    <div class="deal-item">
+        <span class="label">Skill Name:</span> {{ skill_deal.skill.name }}
+    </div>
+    <div class="deal-item">
+        {% if user == skill_deal.provider %}
+            <span class="label">Rquester:</span> {{ skill_deal.owner }}
+        {% elif user == skill_deal.owner %}
+            <span class="label">Provider:</span> {{ skill_deal.provider }}
+        {% endif %}
+    </div>
+    <div class="deal-item">
+        <span class="label">Status:</span> {{ skill_deal.status }}
+    </div>
+    {% if skill_deal.status == 'pending' %}
+    <div class="deal-item">
+        <span class="label">Date Created:</span> {{ skill_deal.created_at | date:"F j, Y" }}
+    </div>
+    {% endif %}
+    {% if skill_deal.status == 'active' %}
+    <div class="deal-item">
+        <span class="label">Date Created:</span> {{ skill_deal.created_at | date:"F j, Y" }}
+    </div>
+    <div class="deal-item">
+        <span class="label">Date Started:</span> {{ skill_deal.start_date | date:"F j, Y" }}
+    </div>
+    {% endif %}
+    {% if skill_deal.status == 'completed' %}
+    <div class="deal-item">
+        <span class="label">Date Created:</span> {{ skill_deal.created_at | date:"F j, Y" }}
+    </div>
+    <div class="deal-item">
+        <span class="label">Date Started:</span> {{ skill_deal.start_date | date:"F j, Y" }}
+    </div>
+    <div class="deal-item">
+        <span class="label">Date Completed:</span> {{ skill_deal.end_date | date:"F j, Y" }}
+    </div>
+    {% endif %}
+</div>
+
+<div>
+    {% if user == skill_deal.owner %}
+        {% if skill_deal.status == 'completed' %}
+            <a href="{% url 'skill_review' skill_deal.skill.pk %}">Review</a>
+        {% elif skill_deal.status == 'active' %}
+            <a href="{% url 'skill_deal_complete' skill_deal.pk %}" class="btn btn-primary">Complete</a>
+        {% endif %}
+    {% elif user == skill_deal.provider %}
+        {% if skill_deal.status == 'pending' %}
+            <a href="{% url 'skill_deal_accept' skill_deal.pk %}" class="btn btn-primary">Accept</a> |
+            <a href="#" class="btn btn-danger">Reject</a>
+        {% elif skill_deal.status == 'active' %}
+            <a href="#" class="btn btn-danger">Cancel</a>
+        {% endif %}
+    {% endif %}
+
+</div>
+
+{% endblock %}

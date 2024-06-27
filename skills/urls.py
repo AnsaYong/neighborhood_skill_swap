@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    SkillReviewCreateView,
     SkillListView,
     SkillDetailView,
     SkillUpdateView,
@@ -15,6 +16,7 @@ from .views import (
 )
 
 urlpatterns = [
+    path("review/<int:pk>/", SkillReviewCreateView.as_view(), name="skill_review"),
     path("<int:pk>/delete/", SkillDeleteView.as_view(), name="skill_delete"),
     path("<int:pk>/edit/", SkillUpdateView.as_view(), name="skill_edit"),
     path("<int:pk>/", SkillDetailView.as_view(), name="skill_detail"),
@@ -27,7 +29,7 @@ urlpatterns = [
         "categories/<str:category>/", SkillListView.as_view(), name="skill_by_category"
     ),
     path(
-        "deals/new/<int:skill_pk", SkillDealCreateView.as_view(), name="skill_deal_new"
+        "deals/new/<int:skill_pk>", SkillDealCreateView.as_view(), name="skill_deal_new"
     ),
     path(
         "deals/accept/<int:deal_pk>",
@@ -38,7 +40,7 @@ urlpatterns = [
     path("deals/<int:pk>/", SkillDealDetailView.as_view(), name="skill_deal_detail"),
     path("deals/<int:pk>/edit/", SkillDealUpdateView.as_view(), name="skill_deal_edit"),
     path(
-        "deals/<int:pk>/complete/",
+        "deals/<int:deal_pk>/complete/",
         SkillDealCompleteView.as_view(),
         name="skill_deal_complete",
     ),

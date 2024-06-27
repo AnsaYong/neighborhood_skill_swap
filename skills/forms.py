@@ -12,7 +12,7 @@ class SkillForm(forms.ModelForm):
 
     class Meta:
         model = Skill
-        fields = ["name", "Level", "description", "category"]
+        fields = ["name", "level", "description", "category"]
 
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(), empty_label="Select a category"

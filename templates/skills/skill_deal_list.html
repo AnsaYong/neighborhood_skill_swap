@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}My Deals{% endblock %}
+
+{% block content %}
+<h1>My Deals</h1>
+
+<h2>Requested Deals</h2>
+<h3>Pending</h3>
+{% if requested_deals_pending %}
+    <ul>
+        {% for deal in requested_deals_pending %}
+            <li>
+                <a href="{% url 'skill_deal_detail' deal.pk %}">{{ deal.skill.name }}</a> - Provider: {{ deal.provider }} - {{ deal.status }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no pending requests.</p>
+{% endif %}
+
+<h3>Active</h3>
+{% if requested_deals_active %}
+    <ul>
+        {% for deal in requested_deals_active %}
+            <li>
+                <a href="{% url 'skill_deal_detail' deal.pk %}">{{ deal.skill.name }}</a> - Provider: {{ deal.provider }} - {{ deal.status }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no active requests.</p>
+{% endif %}
+
+<h2>Provided Deals</h2>
+<h3>Pending</h3>
+{% if provided_deals_pending %}
+    <ul>
+        {% for deal in provided_deals_pending %}
+            <li>
+                <a href="{% url 'skill_deal_detail' deal.pk %}">{{ deal.skill.name }}</a> - Provider: {{ deal.provider }} - {{ deal.status }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No pending requests to provide.</p>
+{% endif %}
+
+<h3>Active</h3>
+{% if provided_deals_active %}
+    <ul>
+        {% for deal in provided_deals_active %}
+            <li>
+                <a href="{% url 'skill_deal_detail' deal.pk %}">{{ deal.skill.name }}</a> - Provider: {{ deal.provider }} - {{ deal.status }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No active requests to provide.</p>
+{% endif %}
+
+<h2>Completed Deals</h2>
+{% if completed_deals %}
+    <ul>
+        {% for deal in completed_deals %}
+            <li>
+                <a href="{% url 'skill_deal_detail' deal.pk %}">{{ deal.skill.name }}</a> - Provider: {{ deal.provider }} - {{ deal.status }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No completed deals.</p>
+{% endif %}
+
+<h2>Canceled Deals</h2>
+{% if canceled_deals %}
+    <ul>
+        {% for deal in canceled_deals %}
+            <li>
+                <a href="{% url 'skill_deal_detail' deal.pk %}">{{ deal.skill.name }}</a> - Provider: {{ deal.provider }} - {{ deal.status }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No canceled deals.</p>
+{% endif %}
+{% endblock %}

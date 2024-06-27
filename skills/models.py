@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+from django.db.models import Avg
 
 
 # Create your models here.
@@ -19,32 +21,13 @@ class Category(models.Model):
         return self.name
 
 
-class Rating(models.Model):
-    """A model to represent the rating of the skills.
-
-    Attributes:
-        skill: A ForeignKey to represent the skill that is rated.
-        user: A ForeignKey to represent the user who rated the skill.
-        rating: A float to represent the rating of the skill.
-
-    """
-
-    skill = models.ForeignKey("Skill", on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    rating = models.FloatField(default=0.0)
-
-    def __str__(self):
-        """Return a string representation of the rating."""
-        return f"{self.skill} - {self.rating}"
-
-
 class Skill(models.Model):
     """A model to represent user's skills.
 
     Attributes:
         name: A CharField to represent the name of the skill.
         category: A CharField to represent the category of the skill for the user.
-        Level: A CharField to represent the level of the skill for the user.
+        level: A CharField to represent the level of the skill for the user.
         description: A TextField to represent the description of the skill.
         date: A DateTimeField to represent the date the skill was created.
         owner: A ForeignKey to represent the user who owns the skill.
@@ -52,16 +35,23 @@ class Skill(models.Model):
     """
 
     name = models.CharField(max_length=100, blank=False)
-    Level = models.CharField(max_length=20, blank=False)
+    level = models.CharField(max_length=20, blank=False)
     description = models.TextField()
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
     skill_type = models.CharField(max_length=20, blank=False)
+    rating = models.FloatField(default=5.0)
 
-    def __str__(self):
-        """Return a string representation of the skill."""
-        return self.name
+    def update_rating(self):
+        """Update the rating of the skill based on average of all reviews."""
+        reviews = Review.objects.filter(skill=self)
+        if reviews.exists():
+            avg_rating = reviews.aggregate(Avg("rating"))["rating__avg"]
+            if avg_rating is not None:
+                # Update rating with a weighted average, considering previous rating
+                self.rating = (self.rating * 4 + avg_rating) / 5
+                self.save()
 
     def get_absolute_url(self):
         """Return the absolute URL of the skill."""
@@ -72,6 +62,34 @@ class Skill(models.Model):
         return SkillDeal.objects.filter(
             skill=self, provider=user, status=SkillDeal.PENDING
         ).exists()
+
+    def __str__(self):
+        """Return a string representation of the skill."""
+        return self.name
+
+
+class Review(models.Model):
+    """A model to represent the review and rating of a skill.
+
+    Attributes:
+        skill: A ForeignKey to represent the skill that is rated.
+        skill_id: An IntegerField to represent the id of the skill.
+        user: A ForeignKey to represent the user who rated the skill.
+        review: A TextField to represent the review of the skill.
+        rating: A float to represent the rating of the skill.
+        date: A DateTimeField to represent the date the rating was created.
+
+    """
+
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    review = models.TextField()
+    rating = models.FloatField(default=5.0)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return a string representation of the rating."""
+        return f"Review for {self.skill.name} - by {self.owner.username}"
 
 
 class SkillDeal(models.Model):
@@ -110,6 +128,7 @@ class SkillDeal(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="requester"
     )
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
 

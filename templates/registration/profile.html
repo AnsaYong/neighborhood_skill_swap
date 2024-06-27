@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if profile.profile_image %}
-    <img src="{{ profile.profile_image.url }}" alt="Profile Image">
-{% else %}
-    <p>No profile image</p>
-{% endif %}
 <p><strong>Bio:</strong> {{ profile.bio }}</p>
 <p><strong>Location:</strong> {{ profile.location }}</p>
 <p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
@@ -17,7 +12,8 @@
     <a href="{% url 'skill_new' %}">Add Offered Skill</a> |
     <a href="{% url 'skill_new_wanted' %}">Add Required Skill</a> |
     <a href="{% url 'profile_update' user.id %}">Edit Profile</a> |
-    <a href="{% url 'skill_list' %}">My Skills</a>
+    <a href="{% url 'skill_list' %}">My Skills</a> |
+    <a href="{% url 'skill_deal_list' %}">My Deals</a>
 {% endif %}
 
 <!-- View skills by search criteria -->

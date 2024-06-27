@@ -1,3 +1,4 @@
+from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpRequest
 from django.http.response import HttpResponse
@@ -10,16 +11,15 @@ from django.views.generic import (
 )
 from django.urls import reverse_lazy
 from django.db.models import Q
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 
-from .models import Skill
+from .models import Skill, Review
 from .forms import (
     SkillForm,
     SkillSearchForm,
     SkillDealForm,
     SkillDeal,
-    SkillDealAcceptForm,
 )
 
 
@@ -139,13 +139,74 @@ class SkillDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         skill = self.get_object()
         user = self.request.user
-        pending_deal = SkillDeal.objects.filter(
+        pending_deals = SkillDeal.objects.filter(
             skill=skill, provider=user, status=SkillDeal.PENDING
-        ).first()
-        context["pending_deal"] = pending_deal
-        # context["deal_exists"] = pending_deal is not None
+        )
+        context["pending_deals"] = pending_deals
+        # or context["deal_exists"] = pending_deals is not None
         context["deal_exists"] = skill.deal_exists_for_user(user)
         return context
+
+
+class SkillReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    """A view to create a new review for a skill.
+    UserpassesTestMixin ensures that only a user who has made use of the
+    skill can review it.
+
+    LoginRequiredMixin ensures the user rating the skill is logged in.
+
+    Attributes:
+        model: A model to represent the reviews.
+        fields: A tuple to represent the fields that can be edited.
+        template_name: A string to represent the template file.
+        context_object_name: A string to represent the context object name.
+    """
+
+    model = Review
+    fields = ["review", "rating"]
+    template_name = "skills/skill_review_create.html"
+    context_object_name = "review"
+
+    def test_func(self):
+        """A method to check if the current user has made use of the skill.
+
+        Returns:
+            A boolean value to check if the current user has made use of the skill.
+        """
+        skill = get_object_or_404(Skill, pk=self.kwargs["pk"])
+        return SkillDeal.objects.filter(
+            skill=skill, owner=self.request.user, status=SkillDeal.COMPLETED
+        ).exists()
+
+    def form_valid(self, form):
+        """A method to set the owner of the review, by default,
+        to the current logged in user creating the review.
+
+        Args:
+            form: A form to represent the review.
+
+        Returns:
+            A response to the form.
+        """
+        form.instance.owner = self.request.user
+        form.instance.skill = get_object_or_404(Skill, pk=self.kwargs["pk"])
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        """A method to add the skill object to the context data so that
+        it can be accessed in the template.
+
+        Returns:
+            A dictionary of the context data.
+        """
+        context = super().get_context_data(**kwargs)
+        context["skill"] = get_object_or_404(Skill, pk=self.kwargs["pk"])
+        return context
+
+    def get_success_url(self) -> str:
+        """URL to redirect the user to the skill detail page after they've
+        successfully reviewed the skill"""
+        return reverse_lazy("skill_detail", kwargs={"pk": self.kwargs["pk"]})
 
 
 class SkillUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -258,12 +319,12 @@ class SkillCreateView(LoginRequiredMixin, CreateView):
         """Customize the fields displayed by the form based on the URL."""
         form = super().get_form(form_class)
         if self.request_path == "/skills/new/wanted/":
-            form.fields.pop("Level")
+            form.fields.pop("level")
             form.fields.pop("description")
         return form
 
 
-class SkillDealCreateView(LoginRequiredMixin, CreateView):
+class SkillDealCreateView(LoginRequiredMixin, View):
     """Create a new skill deal.
 
     LoginRequiredMixin: A mixin to require the user to be logged in.
@@ -275,79 +336,79 @@ class SkillDealCreateView(LoginRequiredMixin, CreateView):
         context_object_name: A string to represent the context object name.
     """
 
-    model = SkillDeal
-    form_class = SkillDealForm
-
-    def form_valid(self, form):
-        """Set the owner and status of the skill deal.
-
-        Args:
-            form: A form to represent the skill deal.
-
-        Returns:
-            A response to the form.
-        """
-        skill = Skill.objects.get(pk=self.kwargs["skill_pk"])
-        form.instance.skill = skill
-        form.instance.provider = skill.owner
-        form.instance.owner = self.request.user
-        form.instance.status = SkillDeal.PENDING
-        # Send a notification to the provider (to be implemented)
-        # NotifyProvider(skill.owner, self.request.user, skill)
-        return super().form_valid(form)
-
     def get(self, request: HttpRequest, *args: str, **kwargs: str) -> HttpResponse:
-        """A method to handle GET requests to the view by creating a deal without
-        reendering the form."""
-        form = self.get_form()
-        return self.form_valid(form)
+        """Handle GET requests.
 
-    def get_success_url(self) -> str:
-        """Return to the user's list of skill deals after successfully
-        creating a new deal."""
-        return redirect("skill_deal_list")
+        Create a new skill deal by automatically setting the skill, owner, provider,
+        and status of the deal in a new SkillDeal object.
+        """
+        skill = get_object_or_404(Skill, pk=self.kwargs["skill_pk"])
+        SkillDeal.objects.create(
+            skill=skill,
+            owner=self.request.user,
+            provider=skill.owner,
+            status=SkillDeal.PENDING,
+        )
+        # Optionally, send a notification to the provider here
+        # NotifyProvider(skill.owner, self.request.user, skill)
+        return redirect("skill_detail", pk=self.kwargs["skill_pk"])
 
 
-class SkillDealAcceptView(LoginRequiredMixin, UpdateView):
+class SkillDealAcceptView(LoginRequiredMixin, View):
     """Accept a skill deal request."""
 
-    model = SkillDeal
-    form_class = SkillDealAcceptForm
+    def get(self, request: HttpRequest, *args: str, **kwargs: str) -> HttpResponse:
+        """Handle GET requests.
 
-    def form_valid(self, form):
-        """Accept the deal by updating the deal status"""
-        form.instance.status = SkillDeal.ACTIVE
-        form.instance.start_date = timezone.now()
-        return super().form_valid(form)
-
-    def get_object(self) -> SkillDeal:
-        """Return the skill deal object."""
-        return SkillDeal.objects.get(
-            pk=self.kwargs["deal_pk"], provider=self.request.user
-        )
-
-    def get_success_url(self) -> str:
+        Accept a skill deal request by updating the status of the existing deal
+        to ACTIVE.
+        """
+        deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
+        deal.accept_deal()
         return redirect("skill_deal_list")
 
 
 class SkillDealListView(LoginRequiredMixin, ListView):
-    """List all skill deals for the current logged in user
+    """List of all skill deals for the current logged in user
     - both deals that the user has requested and ones providing."""
 
     model = SkillDeal
     template_name = "skills/skill_deal_list.html"
-    context_object_name = "skill_deals"
+    context_object_name = "my_deals"
 
-    def get_queryset(self) -> SkillDeal:
-        """Return the list of skill deals for the currect user.
+    def get_context_data(self, **kwargs):
+        """Group the current user's deals into requested and provided deals.
 
         Returns:
-            SkillDeal: The skill deals object.
+            A dictionary of the context data.
         """
-        all_deals = SkillDeal.objects.all()
-        return all_deals.filter(
-            Q(owner=self.request.user) | Q(requester=self.request.user)
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+
+        # Requested deals
+        context["requested_deals_pending"] = SkillDeal.objects.filter(
+            owner=user, status=SkillDeal.PENDING
         )
+        context["requested_deals_active"] = SkillDeal.objects.filter(
+            owner=user, status=SkillDeal.ACTIVE
+        )
+
+        # Provided deals
+        context["provided_deals_pending"] = SkillDeal.objects.filter(
+            provider=user, status=SkillDeal.PENDING
+        )
+        context["provided_deals_active"] = SkillDeal.objects.filter(
+            provider=user, status=SkillDeal.ACTIVE
+        )
+
+        context["completed_deals"] = SkillDeal.objects.filter(
+            owner=user, status=SkillDeal.COMPLETED
+        ) | SkillDeal.objects.filter(provider=user, status=SkillDeal.COMPLETED)
+        context["canceled_deals"] = SkillDeal.objects.filter(
+            owner=user, status=SkillDeal.CANCELLED
+        ) | SkillDeal.objects.filter(provider=user, status=SkillDeal.CANCELLED)
+
+        return context
 
 
 class SkillDealDetailView(LoginRequiredMixin, DetailView):
@@ -401,17 +462,17 @@ class SkillDealUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class SkillDealCompleteView(LoginRequiredMixin, UpdateView):
-    """A view to complete a skill deal."""
+    """A view to complete a skill deal.
 
-    model = SkillDeal
-    fields = ["status"]
-    template_name = "skills/skill_deal_complete.html"
+    Calls the mark_complete() method on the SkillDeal object which updates
+    the specified skill deal's status and end_date attibutes."""
 
-    def form_valid(self, form):
-        """Update the deal status"""
-        form.instance.status = SkillDeal.COMPLETED
-        form.instance.end_date = timezone.now()
-        return super().form_valid(form)
+    def get(self, request: HttpRequest, *args: str, **kwargs: str) -> HttpResponse:
+        """Handle GET requests.
 
-    def get_success_url(self) -> str:
+        Complete a skill deal by updating the status of the existing deal
+        to COMPLETED and setting the end date to the current date.
+        """
+        deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
+        deal.mark_complete()
         return redirect("skill_deal_list")
