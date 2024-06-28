@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="auto">
+<head>
+    <script src="{% static 'js/color-modes.js' %}"></script>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Neighborhood Skill Swap</title>
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    
+    <link href="{% static 'css/product.css' %}" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header sticky-top">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <h2 class="navbar-brand mx-auto site-title">
+                <svg width="30" height="24" class="d-inline-block align-text-top">
+                    <use href="#bootstrap"></use>
+                </svg>
+                Neighborhood Skill Swap
+            </h2>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width: 500px">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a class="btn btn-primary fw-bold text-black py-1 px-3" href="{% url 'login' %}">Log In</a>
+                <a class="btn btn-success fw-bold text-black py-1 px-3 ms-2" href="{% url 'signup' %}">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+</header>
+    
+<main>
+    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-body-tertiary">
+        <div class="col-md-6 p-lg-5 mx-auto my-5">
+            <h1 class="display-3 fw-bold">Easy skill swap deals</h1>
+            <h4 class="fw-normal text-muted mb-4">Discover your neighborhood's hidden talents with Neighborhood Skill Swap! Join us today for free and unlock a world of skill-sharing possibilities. Create your profile, showcase your skills, and connect with others eager to trade knowledge. Manage everything effortlessly through your personalized dashboard. Start exchanging skills and building meaningful connections in your community today!</h4>
+            
+        </div>
+        <div class="product-device shadow-sm d-none d-md-block"></div>
+        <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
+    </div>
+
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+        <div class="text-bg-dark me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 py-3">
+                <h2 class="display-5">Profile Setup</h2>
+                <p class="lead">Create and edit your profile to your taste, including adding a profile picture, bio, and contact information.</p>
+            </div>
+            <div class="bg-body-tertiary shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        </div>
+        <div class="bg-body-tertiary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 p-3">
+                <h2 class="display-5">Wealth of Skills</h2>
+                <p class="lead">List your skills and browse available skills offered by others in their neighborhood.</p>
+            </div>
+            <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        </div>
+    </div>
+
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+        <div class="bg-body-tertiary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 p-3">
+                <h2 class="display-5">Initiate Skill Deals</h2>
+                <p class="lead">Set up a skill exchange deal when you find what your need.</p>
+            </div>
+            <div class="bg-dark shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        </div>
+        <div class="text-bg-primary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 py-3">
+                <h2 class="display-5">Booking System</h2>
+                <p class="lead">Schedule time to exchange skills with other users in your neighborhood.</p>
+            </div>
+            <div class="bg-body-tertiary shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        </div>
+    </div>
+    
+    <div class="d-md-flex flex-md-equal w-100 my-md-3 ps-md-3">
+        <div class="bg-body-tertiary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 p-3">
+                <h2 class="display-5">Time-Based Credit System</h2>
+                <p class="lead">Earn credits based on the time you spend providing a skill or service.</p>
+            </div>
+            <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        </div>
+        <div class="bg-body-tertiary me-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
+            <div class="my-3 py-3">
+                <h2 class="display-5">Reviews and Ratings</h2>
+                <p class="lead">Easily rate the services you receive after the skeal deal exchange is complete.</p>
+            </div>
+            <div class="bg-body shadow-sm mx-auto" style="width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        </div>
+    </div>
+</main>
+
+<footer class="container py-3">
+    <div class="row">
+        <div class="col-6 col-md text-center">
+            <small class="d-block mb-3 text-body-secondary">Neighborhood Skill Swap &copy; 2024</small>
+        </div>
+    </div>
+</footer>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+</html>

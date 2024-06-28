@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Local apps
     "accounts.apps.AccountsConfig",
     "skills.apps.SkillsConfig",
+    "pages.apps.PagesConfig",
 ]
 
 MIDDLEWARE = [
