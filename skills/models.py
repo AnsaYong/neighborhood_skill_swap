@@ -147,3 +147,8 @@ class SkillDeal(models.Model):
         self.status = self.ACTIVE
         self.start_date = timezone.now()
         self.save()
+
+    def cancel_deal(self) -> None:
+        """Cancel the skill deal and set the status to cancelled."""
+        self.status = self.CANCELLED
+        self.save()
