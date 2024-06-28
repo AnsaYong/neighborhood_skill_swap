@@ -26,11 +26,12 @@ class Skill(models.Model):
 
     Attributes:
         name: A CharField to represent the name of the skill.
-        category: A CharField to represent the category of the skill for the user.
         level: A CharField to represent the level of the skill for the user.
         description: A TextField to represent the description of the skill.
-        date: A DateTimeField to represent the date the skill was created.
         owner: A ForeignKey to represent the user who owns the skill.
+        category: A CharField to represent the category of the skill for the user.
+        date: A DateTimeField to represent the date the skill was created.
+        skill_type: A CharField to represent the type of the skill (offered or wanted).
         rating: A float to represent the rating of the skill.
     """
 
