@@ -1,8 +1,59 @@
 {% load crispy_forms_tags %}
 
-<h2>Create Account</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button class="btn btn-success" type="submit">Sign up</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #121212; /* Dark background color */
+            color: #ffffff; /* Light text color */
+        }
+        .signup-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .signup-card {
+            background-color: #1e1e1e; /* Slightly lighter dark color for card */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .signup-card .form-control {
+            background-color: #333333; /* Darker input background */
+            color: #ffffff; /* Light text color for inputs */
+            border: 1px solid #555555; /* Border for inputs */
+        }
+        .signup-card .form-control::placeholder {
+            color: #aaaaaa; /* Placeholder text color */
+        }
+        .signup-btn {
+            width: 100%;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container signup-container">
+    <div class="card signup-card">
+        <div class="card-body">
+            <h2 class="card-title text-center">Sign Up</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button class="btn btn-primary signup-btn mt-3" type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

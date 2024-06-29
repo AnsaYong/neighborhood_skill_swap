@@ -1,8 +1,64 @@
 {% load crispy_forms_tags %}
 
-<h2>Log In</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button class="btn btn-success ml-2" type="submit">Log In</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #121212; /* Dark background color */
+            color: #ffffff; /* Light text color */
+        }
+        .login-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .login-card {
+            background-color: #1e1e1e; /* Slightly lighter dark color for card */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .login-card .form-control {
+            background-color: #333333; /* Darker input background */
+            color: #ffffff; /* Light text color for inputs */
+            border: 1px solid #555555; /* Border for inputs */
+        }
+        .login-card .form-control::placeholder {
+            color: #aaaaaa; /* Placeholder text color */
+        }
+        .login-btn {
+            width: 100%;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container login-container">
+    <div class="card login-card">
+        <div class="card-body">
+            <h2 class="card-title text-center">Neighborhood Skill Swap</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <div class="form-check text-start my-4">
+                    <input class="form-check-input" type="checkbox" value="remember-me" id="flexCheckDefault">
+                    <label class="form-check-label" for="flexCheckDefault">Remember me</label>
+                </div>
+                <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+                <p class="mt-5 mb-3 text-body-secondary">&copy; 2024</p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
