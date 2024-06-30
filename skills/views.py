@@ -53,6 +53,7 @@ class SkillListView(LoginRequiredMixin, ListView):
             kwargs: A dictionary of keyword arguments.
         """
         self.request_path = request.path
+        self.skill_type = kwargs.get("skill_type", None)
         self.category = kwargs.get("category", None)
         return super().dispatch(request, *args, **kwargs)
 
@@ -63,29 +64,39 @@ class SkillListView(LoginRequiredMixin, ListView):
         Returns:
             Skill: Object of the user requested skills.
         """
-        skillset = Skill.objects.all()
-        search_term = self.request.GET.get("search_term")
-        print(f"search term in get_queryset: {search_term}")
+        skillset_all_other_users = Skill.objects.exclude(owner=self.request.user)
+        skillset_user = Skill.objects.filter(owner=self.request.user)
+        skillset_all = Skill.objects.all()
 
-        # If search bar is used
+        search_term = self.request.GET.get("search_term")
+
+        # If search bar is used do not show current user's skills
         if self.request_path == "/skills/search/":
             if search_term:
-                skillset = skillset.filter(
+                skillset = skillset_all_other_users.filter(
                     Q(name__icontains=search_term)
                     | Q(description__icontains=search_term)
                 )
             else:
                 skillset = Skill.objects.none()
 
-        # If category is used
+        # If category is used do not show current user's skills
         elif self.request_path.startswith("/skills/categories/") and self.category:
-            skillset = skillset.filter(category__name__iexact=self.category)
+            skillset = skillset_all_other_users.filter(
+                category__name__iexact=self.category
+            )
+
+        elif self.request_path == "/skills/wanted":
+            skillset = skillset_user.filter(skill_type="wanted")
+
+        elif self.request_path == "/skills/offered":
+            skillset = skillset_user.filter(skill_type="offered")
 
         elif self.request_path == "/skills/all":
-            skillset = skillset
+            skillset = skillset_all
 
         else:
-            skillset = skillset.filter(owner=self.request.user)
+            pass
 
         return skillset
 

@@ -18,7 +18,7 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         """Get the URL to redirect to after a successful login."""
-        return reverse("profile", kwargs={"user_id": self.request.user.id})
+        return reverse("dashboard", kwargs={"user_id": self.request.user.id})
 
 
 class CustomLogoutView(View):
@@ -243,4 +243,30 @@ class ProfileUpdateView(UserPassesTestMixin, UpdateView):
 
     def test_func(self) -> bool:
         """Ensures registered users can only update their own profile."""
+        return self.request.user.id == self.kwargs["user_id"]
+
+
+class DashboardView(UserPassesTestMixin, View):
+    """A class-based view to display a user dashboard.
+
+    Methods:
+        get: A method to handle GET requests to the view.
+    """
+
+    def get(self, request, user_id):
+        """Handle GET requests to the view.
+
+        Args:
+            request (HttpRequest): The request object.
+            user_id (int): The user's ID.
+
+        Returns:
+            HttpResponse: The response object.
+        """
+        # The dashboard should be able to access everything about the user
+        user = get_object_or_404(CustomUser, id=user_id)
+        return render(request, "dashboard.html", {"user": user})
+
+    def test_func(self) -> bool:
+        """Ensures registered users can only view their own dashboard."""
         return self.request.user.id == self.kwargs["user_id"]

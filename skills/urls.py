@@ -23,8 +23,9 @@ urlpatterns = [
     path("new/", SkillCreateView.as_view(), name="skill_new"),
     path("new/wanted/", SkillCreateView.as_view(), name="skill_new_wanted"),
     path("search/", SkillListView.as_view(), name="skill_search"),
-    path("all", SkillListView.as_view(), name="all"),
+    path("all/", SkillListView.as_view(), name="all"),
     path("", SkillListView.as_view(), name="skill_list"),
+    path("<str:skill_type>", SkillListView.as_view(), name="skills"),
     path(
         "categories/<str:category>/", SkillListView.as_view(), name="skill_by_category"
     ),

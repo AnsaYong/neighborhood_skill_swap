@@ -138,8 +138,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.CustomUser"
 
 # Redirect to user profile after login and to landing page after logout
-LOGIN_REDIRECT_URL = "/"
-# LOGOUT_REDIRECT_URL = "landing-page"
+# LOGIN_REDIRECT_URL = "/"
+# LOGOUT_REDIRECT_URL = "landing_page"
 
 # Crispy forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"

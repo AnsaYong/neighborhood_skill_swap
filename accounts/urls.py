@@ -7,6 +7,7 @@ from .views import (
     ProfileView,
     CustomLoginView,
     CustomLogoutView,
+    DashboardView,
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path("profile-decision/", ProfileDecisionView.as_view(), name="profile_decision"),
     path("profile/create/", ProfileCreateView.as_view(), name="profile_create"),
     path("profile/<int:user_id>/", ProfileView.as_view(), name="profile"),
+    path("dashboard/<int:user_id>/", DashboardView.as_view(), name="dashboard"),
 ]

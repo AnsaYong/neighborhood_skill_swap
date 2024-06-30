@@ -9,18 +9,12 @@
 <p><strong>Credits:</strong> {{ profile.credits }}</p>
 
 {% if user == request.user %}
-    <a href="{% url 'skill_new' %}">Add Offered Skill</a> |
-    <a href="{% url 'skill_new_wanted' %}">Add Required Skill</a> |
     <a href="{% url 'profile_update' user.id %}">Edit Profile</a> |
+
+    
     <a href="{% url 'skill_list' %}">My Skills</a> |
     <a href="{% url 'skill_deal_list' %}">My Deals</a>
 {% endif %}
-
-<!-- View skills by search criteria -->
-<form action="{% url 'skill_search' %}" method="get">
-    <input type="text" name="search_term" placeholder="Search for a skill">
-    <button type="submit">Search</button>
-</form>
 
 <!-- View skill by category -->
 <a href="{% url 'skill_by_category' 'Pet' %}">Pet</a> |

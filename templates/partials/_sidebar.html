@@ -1,0 +1,63 @@
+{% load static %}
+
+<div class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-body-tertiary" style="width: 280px;">
+    <a href="{% url 'dashboard' user.id %}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <span class="fs-4">Dashboard</span>
+    </a>
+    <hr>
+    <ul class="list-unstyled ps-0">
+        <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+                My Skills
+            </button>
+            <div class="collapse" id="home-collapse">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li><a href="{% url 'skills' 'offered' %}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Skills | Offer</a></li>
+                    <li><a href="{% url 'skills' 'wanted' %}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Skills | Need</a></li>
+                </ul>
+            </div>
+        </li>
+        <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+                My Deals
+            </button>
+            <div class="collapse" id="dashboard-collapse">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Provided</a></li>
+                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Requested</a></li>
+                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Completed & Canceled</a></li>
+                </ul>
+            </div>
+        </li>
+        <hr>
+        <li class="mb-1">
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+                New Skills
+            </button>
+            <div class="collapse" id="orders-collapse">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                    <li><a href="{% url 'skill_new' %}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Skills | Offer</a></li>
+                    <li><a href="{% url 'skill_new_wanted' %}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Skills | Need</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+    
+    <div class="dropdown mt-auto">
+        <hr>
+        <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+            {% if user.is_authenticated %}
+                <strong>{{ user.username }}</strong>
+            {% else %}
+                <strong>User</strong>
+            {% endif %}
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="{% url 'profile' user.id %}">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+        </ul>
+    </div>
+</div>
