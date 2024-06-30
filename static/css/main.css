@@ -92,3 +92,30 @@
   color: whitesmoke;
   margin-bottom: 10px;
 }
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+}
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+.form-signin input[type="email"], .form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-radius: 0;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+}
+.login-card {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.login-btn {
+  width: 100%;
+  font-weight: bold;
+}
