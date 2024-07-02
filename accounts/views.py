@@ -1,12 +1,14 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.contrib.auth import login, logout
-from .models import UserProfile, CustomUser
-from .forms import UserProfileForm, CustomUserCreationForm
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import UserPassesTestMixin
+
+from .models import UserProfile, CustomUser
+from .forms import UserProfileForm, CustomUserCreationForm
+from skills.models import Skill
 
 
 class CustomLoginView(LoginView):
@@ -248,6 +250,7 @@ class ProfileUpdateView(UserPassesTestMixin, UpdateView):
 
 class DashboardView(UserPassesTestMixin, View):
     """A class-based view to display a user dashboard.
+    Filters data to display on the dashboard.
 
     Methods:
         get: A method to handle GET requests to the view.
@@ -255,6 +258,7 @@ class DashboardView(UserPassesTestMixin, View):
 
     def get(self, request, user_id):
         """Handle GET requests to the view.
+        - Filters the user's "wanted" skills and uses them to filter suggested skills.
 
         Args:
             request (HttpRequest): The request object.
@@ -263,9 +267,20 @@ class DashboardView(UserPassesTestMixin, View):
         Returns:
             HttpResponse: The response object.
         """
-        # The dashboard should be able to access everything about the user
         user = get_object_or_404(CustomUser, id=user_id)
-        return render(request, "dashboard.html", {"user": user})
+
+        # Query the user's "wanted" skills and use to filter suggested skills
+        wanted_skills = Skill.objects.filter(owner=user, skill_type="wanted")
+        wanted_skills_names = [skill.name for skill in wanted_skills]
+        suggested_skills = Skill.objects.filter(
+            name__in=wanted_skills_names, skill_type="offered"
+        ).exclude(owner=user)
+
+        context = {
+            "user": user,
+            "suggested_skills": suggested_skills,
+        }
+        return render(request, "dashboard.html", context)
 
     def test_func(self) -> bool:
         """Ensures registered users can only view their own dashboard."""

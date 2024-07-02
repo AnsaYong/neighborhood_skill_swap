@@ -9,13 +9,13 @@
             <p>{{ skill.owner.username }} offers:</p>
             <div class="row col-auto justify-content-center align-items-center text-center">
                 <div class="col-auto">
-                    <div class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</div>
+                    <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
                 </div>
                 <p>{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</p>
             </div>
         </div>
         <div class="card-footer">
-            >>>>95% Skill Deal Guarantee<<<<
+            >>>> 95% Skill Deal Guarantee <<<<
         </div>
     </div>
     <br />

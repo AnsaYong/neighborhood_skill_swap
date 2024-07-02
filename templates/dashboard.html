@@ -1,1 +1,86 @@
 {% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-1">
+    <!-- Row for searching skills by category -->
+    <div class="row mb-2">
+        <div class="col-12">
+            <h3>Discover skills by Category</h3>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="category-icon mb-2">
+                        <i class="bi bi-laptop"></i>
+                    </div>
+                    <h5 class="card-title"><a href="{% url 'skill_by_category' 'technology' %}">Technology</a></h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="category-icon mb-2">
+                        <i class="bi bi-brush"></i>
+                    </div>
+                    <h5 class="card-title"><a href="{% url 'skill_by_category' 'art' %}">Art</a></h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="category-icon mb-2">
+                        <i class="bi bi-hammer"></i>
+                    </div>
+                    <h5 class="card-title"><a href="{% url 'skill_by_category' 'crafts' %}">Crafts</a></h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="category-icon mb-2">
+                        <i class="bi bi-music-note"></i>
+                    </div>
+                    <h5 class="card-title"><a href="{% url 'skill_by_category' 'music' %}">Music</a></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Row for suggested skills -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h3>Suggested Skills</h3>
+        </div>
+        {% for skill in suggested_skills %}
+            <div class="card col-md-3">
+                <div class="card-body">
+                    <p>{{ skill.owner.username }} offers:</p>
+                    <div class="row col-auto justify-content-center align-items-center text-center">
+                        <div class="col-auto">
+                            <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
+                        </div>
+                        <p>{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    >>>> 95% Skill Deal Guarantee <<<<
+                </div>
+            </div>
+            <br />
+        {% empty %}
+            <div class="card">
+                <div class="card-body">
+                    <p>No skills found.</p>
+                </div>
+            </div>
+            <br />
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

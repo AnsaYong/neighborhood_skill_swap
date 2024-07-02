@@ -23,8 +23,8 @@
             </button>
             <div class="collapse" id="dashboard-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Provided</a></li>
-                    <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Requested</a></li>
+                    <li><a href="{% url 'provided_deals' %}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Provided</a></li>
+                    <li><a href="{% url 'requested_deals' %}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Requested</a></li>
                     <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Deals | Completed & Canceled</a></li>
                 </ul>
             </div>
