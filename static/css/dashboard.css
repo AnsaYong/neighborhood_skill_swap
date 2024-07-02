@@ -1,0 +1,31 @@
+.suggested-skills-wrapper {
+    position: relative;
+}
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+}
+.left-arrow {
+    left: 0;
+}
+
+.right-arrow {
+    right: 0;
+}
+
+
+
+.suggested-skills {
+    display: flex;
+}
+
+.suggested-skills-container {
+    overflow-x: auto;
+    scroll-behavior: smooth;
+}

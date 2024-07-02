@@ -5,6 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.utils import timezone
 
 from .models import UserProfile, CustomUser
 from .forms import UserProfileForm, CustomUserCreationForm
@@ -256,8 +257,12 @@ class DashboardView(UserPassesTestMixin, View):
         get: A method to handle GET requests to the view.
     """
 
+    paginate_by = 4
+    ordering = ["name"]
+
     def get(self, request, user_id):
         """Handle GET requests to the view.
+        - Adds the current date and greeting message to the context.
         - Filters the user's "wanted" skills and uses them to filter suggested skills.
 
         Args:
@@ -269,7 +274,18 @@ class DashboardView(UserPassesTestMixin, View):
         """
         user = get_object_or_404(CustomUser, id=user_id)
 
-        # Query the user's "wanted" skills and use to filter suggested skills
+        # Date and greeting message
+        now = timezone.now()
+        current_date = now.strftime("%A, %B %d, %Y")
+        hour = now.hour
+        if hour < 12:
+            greeting = "Good morning"
+        elif hour < 18:
+            greeting = "Good afternoon"
+        else:
+            greeting = "Good evening"
+
+        # Skill suggestions
         wanted_skills = Skill.objects.filter(owner=user, skill_type="wanted")
         wanted_skills_names = [skill.name for skill in wanted_skills]
         suggested_skills = Skill.objects.filter(
@@ -279,6 +295,8 @@ class DashboardView(UserPassesTestMixin, View):
         context = {
             "user": user,
             "suggested_skills": suggested_skills,
+            "current_date": current_date,
+            "greeting": greeting,
         }
         return render(request, "dashboard.html", context)
 
