@@ -1,24 +1,51 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<p><strong>Bio:</strong> {{ profile.bio }}</p>
-<p><strong>Location:</strong> {{ profile.location }}</p>
-<p><strong>Phone Number:</strong> {{ profile.phone_number }}</p>
-<p><strong>Skills Offered:</strong> {{ profile.skills_offered }}</p>
-<p><strong>Availability:</strong> {{ profile.availability }}</p>
-<p><strong>Credits:</strong> {{ profile.credits }}</p>
-
-{% if user == request.user %}
-    <a href="{% url 'profile_update' user.id %}">Edit Profile</a> |
-
-    
-    <a href="{% url 'skill_list' %}">My Skills</a> |
-    <a href="{% url 'skill_deal_list' %}">My Deals</a>
-{% endif %}
-
-<!-- View skill by category -->
-<a href="{% url 'skill_by_category' 'Pet' %}">Pet</a> |
-<a href="{% url 'skill_by_category' 'Test' %}">Test</a> |
-<a href="{% url 'skill_by_category' 'Music' %}">Music</a>
-
+<div class="container">
+    <div class="row">
+        <!-- Profile Picture Card -->
+        <div class="col-md-4">
+            <div class="card-body text-center">
+                {% if user.profile.profile_image %}
+                    <img src="{{ user.profile.profile_image.url }}" alt="Profile Picture" class="profile-img mb-3 img-fluid">
+                {% else %}
+                    <img src="{% static 'img/default_pic.jpg' %}" alt="Profile Picture" class="profile-img mb-3 img-fluid">
+                {% endif %}
+                <h3>{{ user.username }}</h3>
+                <h5>Credits: {{ user.profile.credits }}</h5>
+                <a href="{% url 'profile_update' user.id %}" class="btn btn-primary">Edit Profile</a>
+            </div>
+        </div>
+        <!-- User Details Card -->
+        <div class="col-md-8">
+            <h3>My Profile</h3>
+            <table class="table table-bordered table-striped">
+                <tbody>
+                    <tr>
+                        <th scope="row">Location</th>
+                        <td>{{ user.profile.location }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Bio</th>
+                        <td>{{ user.profile.bio }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Phone Number</th>
+                        <td>{{ user.profile.phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Skills Offered</th>
+                        <td>{{ user.profile.skills_offered }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Availability</th>
+                        <td>{{ user.profile.availability }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
 {% endblock %}

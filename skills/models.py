@@ -64,6 +64,11 @@ class Skill(models.Model):
             skill=self, provider=user, status=SkillDeal.PENDING
         ).exists()
 
+    def user_has_rated(self, user):
+        """Check if the logged in user has already rated this skill."""
+        print("The code is checking if the logged in user has rated the skill.")
+        return self.reviews.filter(owner=user).exists()
+
     def __str__(self):
         """Return a string representation of the skill."""
         return self.name
@@ -74,8 +79,7 @@ class Review(models.Model):
 
     Attributes:
         skill: A ForeignKey to represent the skill that is rated.
-        skill_id: An IntegerField to represent the id of the skill.
-        user: A ForeignKey to represent the user who rated the skill.
+        owner: A ForeignKey to represent the user who is rating/reviewing the skill.
         review: A TextField to represent the review of the skill.
         rating: A float to represent the rating of the skill.
         date: A DateTimeField to represent the date the rating was created.
@@ -133,10 +137,6 @@ class SkillDeal(models.Model):
     start_date = models.DateTimeField(null=True, blank=True)
     end_date = models.DateTimeField(null=True, blank=True)
 
-    def __str__(self):
-        """Return a string representation of the skill deal."""
-        return f"{self.skill} - Request by {self.owner} - Provided by {self.provider}"
-
     def mark_complete(self) -> None:
         """Mark the skill deal as completed and set the end date."""
         self.status = self.COMPLETED
@@ -153,3 +153,22 @@ class SkillDeal(models.Model):
         """Cancel the skill deal and set the status to cancelled."""
         self.status = self.CANCELLED
         self.save()
+
+    def is_owner(self, user):
+        """Check if the user is the owner of the skill deal."""
+        print("The code is checking if the logged in user owns the deal.")
+        return self.owner == user
+
+    def is_provider(self, user):
+        """Check if the user is the provider of the skill deal."""
+        print("The code is checking if the logged in user is the provider of the deal.")
+        return self.provider == user
+
+    def is_completed(self):
+        """Check if the skill deal is completed."""
+        print("The code is checking if the deal is completed.")
+        return self.status == self.COMPLETED
+
+    def __str__(self):
+        """Return a string representation of the skill deal."""
+        return f"{self.skill} - Request by {self.owner} - Provided by {self.provider}"

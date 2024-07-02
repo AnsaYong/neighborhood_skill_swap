@@ -3,28 +3,36 @@
 {% block title %}My Skills{% endblock %}
 
 {% block content %}
-{% for skill in skills %}
-    <div class="card col-md-3">
-        <div class="card-body">
-            <p>{{ skill.owner.username }} offers:</p>
-            <div class="row col-auto justify-content-center align-items-center text-center">
-                <div class="col-auto">
-                    <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
+<div class="container mt-4">
+    <div class="row">
+        {% for skill in skills %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title">{{ skill.name }}</h5>
                 </div>
-                <p>{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</p>
+                <div class="card-body">
+                    <p class="card-text"><strong>Category:</strong> {{ skill.category }}</p>
+                    <p class="card-text"><strong>Date created:</strong> {{ skill.date }}</p>
+                    {% if skill.skill_type != "wanted" %}
+                        <p class="card-text"><strong>Rating:</strong> {{ skill.rating }}/5</p>
+                    {% endif %}
+                    {% if skill.owner != request.user %}
+                        <p class="card-text"><strong>Owner:</strong> {{ skill.owner }}</p>
+                    {% endif %}
+                    <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-primary btn-sm">View Skill</a>
+                </div>
             </div>
         </div>
-        <div class="card-footer">
-            >>>> 95% Skill Deal Guarantee <<<<
+        {% empty %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <p>No skills found.</p>
+                </div>
+            </div>
         </div>
+        {% endfor %}
     </div>
-    <br />
-{% empty %}
-    <div class="card">
-        <div class="card-body">
-            <p>No skills found.</p>
-        </div>
-    </div>
-    <br />
-{% endfor %}
+</div>
 {% endblock %}

@@ -3,22 +3,92 @@
 {% block title %}My Deals{% endblock %}
 
 {% block content %}
-<div class="row">
-    {% for deal in my_deals %}
-    <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">{{ deal.skill.name }}</h5>
-                <p class="card-text">Provider: {{ deal.provider.username }}</p>
-                <p class="card-text">Status: {{ deal.get_status_display }}</p>
-                <p class="card-text">Start Date: {{ deal.start_date|date:"F d, Y" }}</p>
-                {% if deal.status == 'completed' %}
-                <p class="card-text">End Date: {{ deal.end_date|date:"F d, Y" }}</p>
-                {% endif %}
-                <a href="{% url 'skill_detail' pk=deal.skill.pk %}" class="btn btn-primary">View Skill</a>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Active deals -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title">Active Deals</h5>
+                </div>
+                <div class="card-body">
+                    {% for deal in my_deals %}
+                    {% if deal.status == 'active' %}
+                    <div class="mb-3">
+                        <h4 class="card-subtitle mb-2">{{ deal.skill.name }}</h4>
+                        {% if deal.provider != request.user %}
+                            <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                        {% endif %}
+                        <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
+                        <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
+                        {% if deal.owner == request.user %}
+                            <a href="{% url 'skill_deal_complete' deal.pk %}" class="btn btn-success btn-sm">Complete Deal</a>
+                        {% endif %}
+                    </div>
+                    <hr class="my-4"> <!-- Horizontal line -->
+                    {% endif %}
+                    {% empty %}
+                    <p>You have no active deals currently.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed deals -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title">Completed Deals</h5>
+                </div>
+                <div class="card-body">
+                    {% for deal in my_deals %}
+                        {% if deal.status == 'completed' %}
+                        <div class="mb-3">
+                            <h4 class="card-subtitle mb-2">{{ deal.skill.name }}</h4>
+                            {% if deal.provider != request.user %}
+                            <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                            {% endif %}
+                            <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
+                            <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
+                            <p class="card-text"><strong>End Date:</strong> {{ deal.end_date|date:"F d, Y" }}</p>
+                            {% if deal.provider != request.user %}
+                            <a href="{% url 'skill_review' pk=deal.skill.pk %}" class="btn btn-primary">Rate Skill</a>
+                            {% endif %}
+                        </div>
+                        <hr class="my-4"> <!-- Horizontal line -->
+                    {% endif %}
+                    {% empty %}
+                    <p>No completed deals to review.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancelled deals -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title">Cancelled Deals</h5>
+                </div>
+                <div class="card-body">
+                    {% for deal in my_deals %}
+                    {% if deal.status == 'cancelled' %}
+                    <div class="mb-3">
+                        <h6 class="card-subtitle mb-2">{{ deal.skill.name }}</h6>
+                        {% if deal.provider != request.user %}
+                        <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                        {% endif %}
+                        <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
+                        <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
+                    </div>
+                    <hr class="my-4"> <!-- Horizontal line -->
+                    {% endif %}
+                    {% empty %}
+                    <p>No cancelled deals found.</p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
-    {% endfor %}
 </div>
 {% endblock %}

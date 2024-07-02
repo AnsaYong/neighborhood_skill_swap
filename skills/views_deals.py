@@ -11,7 +11,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .models import Skill, SkillDeal
+from .models import Skill, SkillDeal, Review
 from .forms import SkillDealForm
 
 
@@ -74,11 +74,20 @@ class SkillDealListView(LoginRequiredMixin, ListView):
         filter_type = self.kwargs.get("filter_type", "all")
 
         if filter_type == "provided":
-            return SkillDeal.objects.filter(provider=user)
+            queryset = SkillDeal.objects.filter(provider=user)
         elif filter_type == "requested":
-            return SkillDeal.objects.filter(owner=user)
+            queryset = SkillDeal.objects.filter(owner=user)
         else:
-            return SkillDeal.objects.filter(Q(provider=user) | Q(owner=user))
+            queryset = SkillDeal.objects.filter(Q(provider=user) | Q(owner=user))
+
+        reviewed_skills = Review.objects.filter(owner=user).values_list(
+            "skill_id", flat=True
+        )
+        queryset = queryset.exclude(
+            Q(status=SkillDeal.COMPLETED) & Q(skill_id__in=reviewed_skills)
+        )
+
+        return queryset
 
     def get_context_data(self, **kwargs):
         """Add the filter type to the context."""
@@ -92,15 +101,20 @@ class ProvidedDealsView(SkillDealListView):
 
     def get_queryset(self):
         """Return a list of skill deals where the user is the provider."""
+        user = self.request.user
+        rated_skills = Review.objects.filter(owner=user).values_list(
+            "skill_id", flat=True
+        )
+
         return SkillDeal.objects.filter(
-            provider=self.request.user,
+            provider=user,
             status__in=[
                 SkillDeal.PENDING,
                 SkillDeal.ACTIVE,
                 SkillDeal.COMPLETED,
                 SkillDeal.CANCELLED,
             ],
-        )
+        ).exclude(Q(status=SkillDeal.COMPLETED) & Q(skill_id__in=rated_skills))
 
 
 class RequestedDealsView(SkillDealListView):
@@ -108,15 +122,22 @@ class RequestedDealsView(SkillDealListView):
 
     def get_queryset(self):
         """Return a list of skill deals where the user is the owner."""
-        return SkillDeal.objects.filter(
-            owner=self.request.user,
+        user = self.request.user
+        rated_skills = Review.objects.filter(owner=user).values_list(
+            "skill_id", flat=True
+        )
+
+        queryset = SkillDeal.objects.filter(
+            owner=user,
             status__in=[
                 SkillDeal.PENDING,
                 SkillDeal.ACTIVE,
                 SkillDeal.COMPLETED,
                 SkillDeal.CANCELLED,
             ],
-        )
+        ).exclude(Q(status=SkillDeal.COMPLETED) & Q(skill_id__in=rated_skills))
+
+        return queryset
 
 
 class SkillDealDetailView(LoginRequiredMixin, DetailView):
