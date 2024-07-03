@@ -74,11 +74,62 @@
     </div>
 
     <!-- Third Row: Suggested Skills -->
-    <div class="row mt-4" id="suggested-skills-container">
+    <div class="row mt-4">
         <div class="col-12">
             <h3>Suggested Skills</h3>
-            <div class="row" id="suggested_skills">
-                {% include 'partials/suggested_skills.html' %}
+            <div class="row">
+                {% for skill in suggested_skills %}
+                <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <p>{{ skill.owner.username }} offers:</p>
+                            <div class="row col-auto justify-content-center align-items-center text-center">
+                                <div class="col-auto">
+                                    <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
+                                </div>
+                                <p>{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</p>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            >>>> 95% Skill Deal Guarantee <<<<
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <p>No skills found.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Pagination for suggested skills -->
+            <div class="row justify-content-center">
+                <nav>
+                    <ul class="pagination">
+                        {% if suggested_skills.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ suggested_skills.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Page {{ suggested_skills.number }} of {{ suggested_skills.paginator.num_pages }}</span>
+                        </li>
+                        {% if suggested_skills.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ suggested_skills.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ suggested_skills.paginator.num_pages }}">Last</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>

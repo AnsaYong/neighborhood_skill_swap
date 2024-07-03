@@ -6,6 +6,7 @@ from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils import timezone
+from django.core.paginator import Paginator
 
 from .models import UserProfile, CustomUser
 from .forms import UserProfileForm, CustomUserCreationForm
@@ -257,9 +258,6 @@ class DashboardView(UserPassesTestMixin, View):
         get: A method to handle GET requests to the view.
     """
 
-    paginate_by = 4
-    ordering = ["name"]
-
     def get(self, request, user_id):
         """Handle GET requests to the view.
         - Adds the current date and greeting message to the context.
@@ -288,9 +286,14 @@ class DashboardView(UserPassesTestMixin, View):
         # Skill suggestions
         wanted_skills = Skill.objects.filter(owner=user, skill_type="wanted")
         wanted_skills_names = [skill.name for skill in wanted_skills]
-        suggested_skills = Skill.objects.filter(
+        selected_skills = Skill.objects.filter(
             name__in=wanted_skills_names, skill_type="offered"
         ).exclude(owner=user)
+
+        # Pagination
+        paginator = Paginator(selected_skills, 4)
+        page_number = request.GET.get("page")
+        suggested_skills = paginator.get_page(page_number)
 
         context = {
             "user": user,
