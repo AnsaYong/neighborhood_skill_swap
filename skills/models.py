@@ -66,7 +66,6 @@ class Skill(models.Model):
 
     def user_has_rated(self, user):
         """Check if the logged in user has already rated this skill."""
-        print("The code is checking if the logged in user has rated the skill.")
         return self.reviews.filter(owner=user).exists()
 
     def __str__(self):

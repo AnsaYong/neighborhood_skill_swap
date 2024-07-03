@@ -14,15 +14,26 @@
                 <h5>{{ current_date }}</h5>
                 <h2>{{ greeting }}, {{ user.username }}!</h2>
             </div>
-            <!-- Notification Bell -->
-            <div class="text-right">
-                <div class="notification-bell position-relative d-inline-block">
+            <!-- Notifications -->
+            <div class="text-right  d-flex justify-content-end align-items-center">
+                <!-- Notification Bell -->
+                <div class="notification-bell position-relative d-inline-block mx-2">
                     <span class="notification-count position-absolute translate-middle badge rounded-pill bg-danger">
-                        {{ notification_count }}
+                        {{ pending_deals_count }}
                     </span>
                     <i class="bi bi-bell" style="font-size: 2rem;"></i>
                 </div>
-            </div>
+
+                <!-- Notification Envelope -->
+                <div class="notification-envelope position-relative d-inline-block mx-2">
+                    <a href="#">
+                        <span class="notification-count position-absolute translate-middle badge rounded-pill bg-danger">
+                            {{ unread_messages_count }}
+                        </span>
+                        <i class="bi bi-envelope" style="font-size: 2rem;"></i>
+                    </a>
+                </div>
+            </div>            
         </div>
     </div>
 
@@ -85,14 +96,18 @@
             <h3>Suggested Skills</h3>
             <div class="row">
                 {% for skill in suggested_skills %}
-                <div class="col-md-4 mb-4">
+                <div class="col-md-3 mb-4">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title">{{ skill.owner.username }} offers:</h5>
-                            <p class="card-text">
+                            <h6 class="card-title mb-4">{{ skill.owner.username }} offers:</h6>
+                            <p class="card-text text-center">
                                 <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
                             </p>
-                            <p class="card-text"><small class="text-muted">{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</small></p>
+                            {% if skill.reviews_count == 1 %}
+                            <p class="card-text text-center"><small class="text-muted">{{ skill.rating }}/5 - {{ skill.reviews_count }} review</small></p>
+                            {% else %}
+                            <p class="card-text text-center"><small class="text-muted">{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</small></p>
+                            {% endif %}
                         </div>
                         <div class="card-footer text-center">
                             <small class="text-muted">95% Skill Deal Guarantee</small>

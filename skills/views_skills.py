@@ -58,7 +58,9 @@ class SkillListView(LoginRequiredMixin, ListView):
         Returns:
             Skill: Object of the user requested skills.
         """
-        skillset_all_other_users = Skill.objects.exclude(owner=self.request.user)
+        skillset_all_other_users = Skill.objects.exclude(
+            Q(owner=self.request.user) | Q(skill_type="wanted")
+        )
         skillset_user = Skill.objects.filter(owner=self.request.user)
         skillset_all = Skill.objects.all()
 
@@ -144,12 +146,18 @@ class SkillDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         skill = self.get_object()
         user = self.request.user
-        pending_deals = SkillDeal.objects.filter(
-            skill=skill, provider=user, status=SkillDeal.PENDING
-        )
+
+        # Get pending deal requests for this skill
+        pending_deals = SkillDeal.objects.filter(skill=skill, status=SkillDeal.PENDING)
         context["pending_deals"] = pending_deals
-        # or context["deal_exists"] = pending_deals is not None
         context["deal_exists"] = skill.deal_exists_for_user(user)
+
+        # Get reviews for this skill
+        reviews = Review.objects.filter(skill=skill)
+        reviews_count = reviews.count()
+        context["reviews"] = reviews
+        context["reviews_count"] = reviews_count
+
         return context
 
 
@@ -301,6 +309,14 @@ class SkillCreateView(LoginRequiredMixin, CreateView):
         """
         self.request_path = request.path
         return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        """Overriding the default success URL to redirect to the skills page
+        - wanted or offered based on the type of skilll created."""
+        if self.request_path == "/skills/new/wanted/":
+            return reverse_lazy("skills", kwargs={"skill_type": "wanted"})
+        else:
+            return reverse_lazy("skills", kwargs={"skill_type": "offered"})
 
     def form_valid(self, form):
         """A method to set the owner of the skill, by default,

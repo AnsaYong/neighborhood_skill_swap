@@ -2,11 +2,25 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<h1>New skill</h1>
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-success ml-2">Create</button>
-    <a href="{% url 'skill_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title text-center">New Skill</h1>
+                </div>
+                <div class="card-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-success mx-2">Create</button>
+                            <a href="/skills/wanted/" class="btn btn-secondary mx-2">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

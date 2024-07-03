@@ -20,7 +20,11 @@
                     {% if skill.owner != request.user %}
                         <p class="card-text"><strong>Owner:</strong> {{ skill.owner }}</p>
                     {% endif %}
-                    <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-primary btn-sm">View Skill</a>
+                    {% if skill.skill_type == "wanted" %}
+                        <a href="#" class="btn btn-primary btn-sm">Search for Skill</a>
+                    {% else %}
+                        <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-primary btn-sm">View Skill</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
