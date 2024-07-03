@@ -91,3 +91,35 @@
     padding: 0.75rem;
     font-size: 0.9rem;
 }
+
+.category-icon {
+    font-size: 1rem;
+}
+
+.category-text {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.category-text a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.category-text a:hover {
+    text-decoration: underline;
+}
+
+.notification-bell {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-count {
+    top: 10px; /* Adjust this value to move the badge up or down */
+    right: -15px; /* Adjust this value to move the badge left or right */
+    transform: translate(50%, -50%);
+    font-size: 0.75rem;
+    padding: 0.2em 0.5em;
+    line-height: 1; /* Ensure the badge is circular */
+}
