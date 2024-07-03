@@ -1,6 +1,7 @@
 .suggested-skills-wrapper {
     position: relative;
 }
+
 .arrow {
     position: absolute;
     top: 50%;
@@ -11,6 +12,7 @@
     cursor: pointer;
     z-index: 10;
 }
+
 .left-arrow {
     left: 0;
 }
@@ -19,8 +21,6 @@
     right: 0;
 }
 
-
-
 .suggested-skills {
     display: flex;
 }
@@ -28,4 +28,66 @@
 .suggested-skills-container {
     overflow-x: auto;
     scroll-behavior: smooth;
+}
+
+.notification-bell {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+.notification-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: red;
+    color: white;
+    border-radius: 100%;
+    padding: 5px 10px;
+}
+
+.card-title {
+    font-weight: bold;
+}
+
+.card-text {
+    margin-bottom: 1rem;
+}
+
+.card-footer {
+    font-size: 0.9rem;
+}
+
+.pagination .page-item .page-link {
+    color: #007bff;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.square-card {
+    width: 100%;
+    padding-top: 100%; /* 1:1 Aspect Ratio */
+    position: relative;
+}
+
+.square-card .card-body, .square-card .card-footer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.square-card .card-body {
+    padding: 1rem;
+}
+
+.square-card .card-footer {
+    padding: 0.75rem;
+    font-size: 0.9rem;
 }

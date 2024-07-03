@@ -35,12 +35,13 @@ class SkillDealCreateView(LoginRequiredMixin, View):
         and status of the deal in a new SkillDeal object.
         """
         skill = get_object_or_404(Skill, pk=self.kwargs["skill_pk"])
-        SkillDeal.objects.create(
+        skill_deal = SkillDeal.objects.create(
             skill=skill,
             owner=self.request.user,
             provider=skill.owner,
             status=SkillDeal.PENDING,
         )
+        skill_deal.send_message_on_request()
         # Optionally, send a notification to the provider here
         # NotifyProvider(skill.owner, self.request.user, skill)
         return redirect("skill_detail", pk=self.kwargs["skill_pk"])

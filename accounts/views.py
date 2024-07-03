@@ -10,7 +10,7 @@ from django.core.paginator import Paginator
 
 from .models import UserProfile, CustomUser
 from .forms import UserProfileForm, CustomUserCreationForm
-from skills.models import Skill
+from skills.models import Skill, SkillDeal, Message
 
 
 class CustomLoginView(LoginView):
@@ -290,16 +290,33 @@ class DashboardView(UserPassesTestMixin, View):
             name__in=wanted_skills_names, skill_type="offered"
         ).exclude(owner=user)
 
-        # Pagination
-        paginator = Paginator(selected_skills, 4)
+        # Pagination for suggested skills
+        paginator = Paginator(selected_skills, 3)
         page_number = request.GET.get("page")
         suggested_skills = paginator.get_page(page_number)
+
+        # Recent deals and unread messages
+        recent_deals = SkillDeal.objects.filter(provider=user).order_by("-created_at")[
+            :5
+        ]
+        unread_messages = Message.objects.filter(receiver=user, is_read=False).order_by(
+            "-timestamp"
+        )[:5]
+
+        # Notification count
+        notification_count = (
+            unread_messages.count()
+            + SkillDeal.objects.filter(provider=user, status=SkillDeal.PENDING).count()
+        )
 
         context = {
             "user": user,
             "suggested_skills": suggested_skills,
             "current_date": current_date,
             "greeting": greeting,
+            "recent_deals": recent_deals,
+            "unread_messages": unread_messages,
+            "notification_count": notification_count,
         }
         return render(request, "dashboard.html", context)
 

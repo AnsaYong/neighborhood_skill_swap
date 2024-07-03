@@ -74,29 +74,6 @@ class Skill(models.Model):
         return self.name
 
 
-class Review(models.Model):
-    """A model to represent the review and rating of a skill.
-
-    Attributes:
-        skill: A ForeignKey to represent the skill that is rated.
-        owner: A ForeignKey to represent the user who is rating/reviewing the skill.
-        review: A TextField to represent the review of the skill.
-        rating: A float to represent the rating of the skill.
-        date: A DateTimeField to represent the date the rating was created.
-
-    """
-
-    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
-    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    review = models.TextField()
-    rating = models.FloatField(default=5.0)
-    date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        """Return a string representation of the rating."""
-        return f"Review for {self.skill.name} - by {self.owner.username}"
-
-
 class SkillDeal(models.Model):
     """A model to represent a skill deal.
 
@@ -169,6 +146,64 @@ class SkillDeal(models.Model):
         print("The code is checking if the deal is completed.")
         return self.status == self.COMPLETED
 
+    def send_message_on_request(self):
+        """Send a message to the provider when a skill deal is requested."""
+        Message.objects.create(
+            sender=self.owner,
+            receiver=self.provider,
+            content=f"{self.owner.username} has requested a deal for {self.skill.name}",
+        )
+
     def __str__(self):
         """Return a string representation of the skill deal."""
         return f"{self.skill} - Request by {self.owner} - Provided by {self.provider}"
+
+
+class Message(models.Model):
+    """A model to represent a message notification regarding a swap deal.
+
+    Attributes:
+        sender: A ForeignKey to represent the user who sent the message.
+        receiver: A ForeignKey to represent the user who received the message.
+        content: A TextField to represent the content of the message(optional).
+        timestamp: A DateTimeField to represent the date the message was created.
+    """
+
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_messages"
+    )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_messages",
+    )
+    content = models.TextField()
+    is_read = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return a string representation of the message."""
+        return f"Message from {self.sender.username} to {self.receiver.username}"
+
+
+class Review(models.Model):
+    """A model to represent the review and rating of a skill.
+
+    Attributes:
+        skill: A ForeignKey to represent the skill that is rated.
+        owner: A ForeignKey to represent the user who is rating/reviewing the skill.
+        review: A TextField to represent the review of the skill.
+        rating: A float to represent the rating of the skill.
+        date: A DateTimeField to represent the date the rating was created.
+
+    """
+
+    skill = models.ForeignKey(Skill, on_delete=models.CASCADE)
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    review = models.TextField()
+    rating = models.FloatField(default=5.0)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return a string representation of the rating."""
+        return f"Review for {self.skill.name} - by {self.owner.username}"

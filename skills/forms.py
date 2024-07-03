@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Skill, Category, SkillDeal
+from .models import Skill, Category, SkillDeal, Message
 
 
 class SkillForm(forms.ModelForm):
@@ -77,3 +77,23 @@ class SkillDealAcceptForm(forms.ModelForm):
             "status": forms.HiddenInput(),
             "start_date": forms.HiddenInput(),
         }
+
+
+class MessageForm(forms.ModelForm):
+    """A form to create and update message details.
+
+    Attributes:
+        class Meta: A class to represent the model and manipulate fields of the form.
+    """
+
+    class Meta:
+        """Additional settings - Set the model and fields of the form.
+
+        Attributes:
+            model: A model to represent the model of the form.
+            fields: A list to represent the fields of the form.
+            widgets: Fields to hide when the form is rendered.
+        """
+
+        model = Message
+        fields = ["content", "sender", "receiver"]

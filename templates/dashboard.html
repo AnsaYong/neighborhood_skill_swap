@@ -1,12 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block extra_js %}
-<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
-<script src="{% static 'js/infinite.min.js' %}"></script>
-<script src="{% static 'js/dashboard.js' %}"></script>
-{% endblock %}
-
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
@@ -14,15 +8,25 @@
 
     <!-- First Row: Date and Greeting Message -->
     <div class="row mt-1 mb-2">
-        <div class="col-12 text-center py-2">
-            <h5>{{ current_date }}</h5>
-            <h2>{{ greeting }}, {{ user.username }}!</h2>
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <!-- Greeting message -->
+            <div class="text-center w-100">
+                <h5>{{ current_date }}</h5>
+                <h2>{{ greeting }}, {{ user.username }}!</h2>
+            </div>
+            <!-- Notification Bell -->
+            <div class="text-right">
+                <div class="notification-bell">
+                    <span class="notification-count">{{ notification_count }}</span>
+                    <i class="fa fa-bell"></i>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Second Row: Discover skills by category -->
     <div class="row mb-4">
-        <div class="col-12">
+        <div class="col-8">
             <div class="card border-secondary">
                 <div class="card-body">
                     <h3 class="card-title text-center">Discover skills by Category</h3>
@@ -79,19 +83,17 @@
             <h3>Suggested Skills</h3>
             <div class="row">
                 {% for skill in suggested_skills %}
-                <div class="col-md-3 mb-3">
-                    <div class="card h-100">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
                         <div class="card-body">
-                            <p>{{ skill.owner.username }} offers:</p>
-                            <div class="row col-auto justify-content-center align-items-center text-center">
-                                <div class="col-auto">
-                                    <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
-                                </div>
-                                <p>{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</p>
-                            </div>
+                            <h5 class="card-title">{{ skill.owner.username }} offers:</h5>
+                            <p class="card-text">
+                                <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
+                            </p>
+                            <p class="card-text"><small class="text-muted">{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</small></p>
                         </div>
-                        <div class="card-footer">
-                            >>>> 95% Skill Deal Guarantee <<<<
+                        <div class="card-footer text-center">
+                            <small class="text-muted">95% Skill Deal Guarantee</small>
                         </div>
                     </div>
                 </div>
@@ -105,6 +107,7 @@
                 </div>
                 {% endfor %}
             </div>
+            
             <!-- Pagination for suggested skills -->
             <div class="row justify-content-center">
                 <nav>
@@ -134,21 +137,49 @@
         </div>
     </div>
 
-    <!-- Fourth Row: Notifications and Calendar (Placeholder for future design) -->
+    <!-- Fourth Row: Notifications -->
     <div class="row mt-4">
-        <div class="col-md-8">
-            <div class="card">
+        <!-- Recent deals -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Recent Deals</h3>
+                </div>
                 <div class="card-body">
-                    <h3>Notifications</h3>
-                    <!-- Notifications content goes here -->
+                    <ul class="list-group list-group-flush">
+                        {% for deal in recent_deals %}
+                        <li class="list-group-item">
+                            <strong>{{ deal.owner.username }}</strong> requested from <strong>{{ deal.provider.username }}</strong> - <em>{{ deal.skill.name }}</em> <br>
+                            <small class="text-muted">{{ deal.created_at|date:"F j, Y, g:i a" }}</small>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted">
+                            No recent deals.
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card">
+        <!-- Unread messages -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="card-title mb-0">Unread Messages</h3>
+                </div>
                 <div class="card-body">
-                    <h3>Calendar</h3>
-                    <!-- Calendar content goes here -->
+                    <ul class="list-group list-group-flush">
+                        {% for message in unread_messages %}
+                        <li class="list-group-item">
+                            <strong>{{ message.sender.username }}</strong>: {{ message.content }} <br>
+                            <small class="text-muted">{{ message.timestamp|date:"F j, Y, g:i a" }}</small>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item text-center text-muted">
+                            No unread messages.
+                        </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
