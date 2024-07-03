@@ -18,6 +18,7 @@ from .views_deals import (
     ProvidedDealsView,
     RequestedDealsView,
 )
+from .views_messages import MessageListView
 
 urlpatterns = [
     # Skill urls
@@ -53,4 +54,6 @@ urlpatterns = [
         SkillDealCompleteView.as_view(),
         name="skill_deal_complete",
     ),
+    # Message urls
+    path("messages/", MessageListView.as_view(), name="message_list"),
 ]
