@@ -44,15 +44,11 @@ class Skill(models.Model):
     skill_type = models.CharField(max_length=20, blank=False)
     rating = models.FloatField(default=5.0)
 
-    def update_rating(self):
+    def update_rating(self, current_rating: float) -> None:
         """Update the rating of the skill based on average of all reviews."""
-        reviews = Review.objects.filter(skill=self)
-        if reviews.exists():
-            avg_rating = reviews.aggregate(Avg("rating"))["rating__avg"]
-            if avg_rating is not None:
-                # Update rating with a weighted average, considering previous rating
-                self.rating = (self.rating * 4 + avg_rating) / 5
-                self.save()
+        new_rating = (self.rating * 0.85) + (current_rating * 0.15)
+        self.rating = round(new_rating, 2)
+        self.save()
 
     def get_absolute_url(self):
         """Return the absolute URL of the skill."""
@@ -61,7 +57,7 @@ class Skill(models.Model):
     def deal_exists_for_user(self, user):
         """Check if a deal request exists for the current user and skill."""
         return SkillDeal.objects.filter(
-            skill=self, provider=user, status=SkillDeal.PENDING
+            skill=self, owner=user, status=SkillDeal.PENDING
         ).exists()
 
     def user_has_rated(self, user):
@@ -202,6 +198,11 @@ class Review(models.Model):
     review = models.TextField()
     rating = models.FloatField(default=5.0)
     date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        """Save the rating of the skill which updates the rating for the skill"""
+        super().save(*args, **kwargs)
+        self.skill.update_rating(self.rating)
 
     def __str__(self):
         """Return a string representation of the rating."""

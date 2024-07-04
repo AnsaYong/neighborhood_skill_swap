@@ -1,5 +1,9 @@
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect
+from django.views import View
+
+
 from .models import Message
 
 
@@ -22,12 +26,13 @@ class MessageListView(LoginRequiredMixin, ListView):
         """Filter messages for the logged-in user."""
         return Message.objects.filter(receiver=self.request.user).order_by("-timestamp")
 
-    def get_context_data(self, **kwargs):
-        """Mark messages as read."""
-        context = super().get_context_data(**kwargs)
-        # Mark messages as read
-        unread_messages = Message.objects.filter(
-            receiver=self.request.user, is_read=False
-        )
-        unread_messages.update(is_read=True)
-        return context
+
+class MessageReadView(LoginRequiredMixin, View):
+    """A view to mark a message as read."""
+
+    def get(self, request, *args, **kwargs):
+        """Mark the message as read."""
+        message = get_object_or_404(Message, pk=kwargs["pk"], receiver=request.user)
+        message.is_read = True
+        message.save()
+        return redirect("message_list")

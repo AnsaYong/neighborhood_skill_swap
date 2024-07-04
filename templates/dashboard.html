@@ -104,9 +104,9 @@
                                 <a href="{% url 'skill_detail' skill.pk %}" class="btn btn-outline-secondary rounded-pill">{{ skill.name }}</a>
                             </p>
                             {% if skill.reviews_count == 1 %}
-                            <p class="card-text text-center"><small class="text-muted">{{ skill.rating }}/5 - {{ skill.reviews_count }} review</small></p>
+                            <p class="card-text text-center"><small class="text-muted">{{ skill.rating|floatformat:1 }}/5 - {{ skill.reviews_count }} review</small></p>
                             {% else %}
-                            <p class="card-text text-center"><small class="text-muted">{{ skill.rating }}/5 - {{ skill.reviews_count }} reviews</small></p>
+                            <p class="card-text text-center"><small class="text-muted">{{ skill.rating|floatformat:1 }}/5 - {{ skill.reviews_count }} reviews</small></p>
                             {% endif %}
                         </div>
                         <div class="card-footer text-center">

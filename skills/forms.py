@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Skill, Category, SkillDeal, Message
+from .models import Skill, Category, SkillDeal, Message, Review
 
 
 class SkillForm(forms.ModelForm):
@@ -97,3 +97,29 @@ class MessageForm(forms.ModelForm):
 
         model = Message
         fields = ["content", "sender", "receiver"]
+
+
+class ReviewForm(forms.ModelForm):
+    """A form to create and update review details.
+
+    Attributes:
+        class Meta: A class to represent the model and manipulate fields of the form.
+    """
+
+    rating = forms.ChoiceField(
+        choices=[(i, str(i)) for i in range(1, 6)],
+        label="Rating",
+        widget=forms.RadioSelect(attrs={"class": "rating"}),
+    )
+
+    class Meta:
+        """Additional settings - Set the model and fields of the form.
+
+        Attributes:
+            model: A model to represent the model of the form.
+            fields: A list to represent the fields of the form.
+            widgets: Fields to hide when the form is rendered.
+        """
+
+        model = Review
+        fields = ["review", "rating"]

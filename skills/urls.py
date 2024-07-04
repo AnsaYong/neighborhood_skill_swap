@@ -11,6 +11,7 @@ from .views_skills import (
 from .views_deals import (
     SkillDealCreateView,
     SkillDealAcceptView,
+    SkillDealRejectView,
     SkillDealUpdateView,
     SkillDealListView,
     SkillDealDetailView,
@@ -18,7 +19,7 @@ from .views_deals import (
     ProvidedDealsView,
     RequestedDealsView,
 )
-from .views_messages import MessageListView
+from .views_messages import MessageListView, MessageReadView
 
 urlpatterns = [
     # Skill urls
@@ -44,6 +45,11 @@ urlpatterns = [
         SkillDealAcceptView.as_view(),
         name="skill_deal_accept",
     ),
+    path(
+        "deals/reject/<int:deal_pk>/",
+        SkillDealRejectView.as_view(),
+        name="skill_deal_reject",
+    ),
     path("deals/", SkillDealListView.as_view(), name="skill_deal_list"),
     path("deals/provided/", ProvidedDealsView.as_view(), name="provided_deals"),
     path("deals/requested/", RequestedDealsView.as_view(), name="requested_deals"),
@@ -56,4 +62,5 @@ urlpatterns = [
     ),
     # Message urls
     path("messages/", MessageListView.as_view(), name="message_list"),
+    path("messages/read/<int:pk>/", MessageReadView.as_view(), name="message_read"),
 ]

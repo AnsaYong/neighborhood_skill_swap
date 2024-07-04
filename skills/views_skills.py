@@ -14,7 +14,7 @@ from django.views.generic import (
 )
 
 from .models import Skill, SkillDeal, Review
-from .forms import SkillForm, SkillSearchForm
+from .forms import SkillForm, SkillSearchForm, ReviewForm
 
 
 # Create your views here.
@@ -176,7 +176,7 @@ class SkillReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
     """
 
     model = Review
-    fields = ["review", "rating"]
+    form_class = ReviewForm
     template_name = "skills/skill_review_create.html"
     context_object_name = "review"
 
@@ -203,7 +203,10 @@ class SkillReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
         """
         form.instance.owner = self.request.user
         form.instance.skill = get_object_or_404(Skill, pk=self.kwargs["pk"])
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        print(f"My rating is: {form.instance.rating}")
+        form.instance.skill.update_rating(form.instance.rating)
+        return response
 
     def get_context_data(self, **kwargs):
         """A method to add the skill object to the context data so that

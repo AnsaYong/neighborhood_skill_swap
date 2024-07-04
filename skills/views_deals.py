@@ -58,7 +58,7 @@ class SkillDealAcceptView(LoginRequiredMixin, View):
         """
         deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
         deal.accept_deal()
-        return redirect("skill_deal_list")
+        return redirect("provided_deals")
 
 
 class SkillDealListView(LoginRequiredMixin, ListView):
@@ -206,3 +206,17 @@ class SkillDealCompleteView(LoginRequiredMixin, UpdateView):
         deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
         deal.mark_complete()
         return redirect("skill_deal_list")
+
+
+class SkillDealRejectView(LoginRequiredMixin, View):
+    """Reject a skill deal request."""
+
+    def get(self, request: HttpRequest, *args: str, **kwargs: str) -> HttpResponse:
+        """Handle GET requests.
+
+        Reject a skill deal request by updating the status of the existing deal
+        to CANCELLED.
+        """
+        deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
+        deal.cancel_deal()
+        return redirect("provided_deals")

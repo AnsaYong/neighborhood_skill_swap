@@ -233,3 +233,45 @@ hr {
     margin-left: 0; /* Reset margin for main content */
   }
 }
+.star-rating {
+  direction: rtl;
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 200px;
+  font-size: 30px;
+}
+
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  color: #ddd;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.star-rating input[type="radio"]:checked ~ label,
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: #ffc107;
+}
+
+
+.star-option {
+  margin-right: 200px; /* Adjust margin between stars as needed */
+}
+
+.star-option label {
+  cursor: pointer; /* Add pointer cursor to the star labels */
+}
+
+.form-group {
+  margin-bottom: 20px; /* Adjust bottom margin of form group as needed */
+}
+
+/* Optional: Adjust label style */
+label {
+  font-weight: bold; /* Make labels bold */
+}

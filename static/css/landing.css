@@ -1,0 +1,22 @@
+
+.feature-row:nth-child(odd) {
+    background-color: #3e4852;
+}
+.feature-row:nth-child(even) {
+    background-color: #3e4852;
+}
+.feature-row:hover {
+    background-color: #676a6c;
+    transition: background-color 0.3s;
+}
+.feature-description {
+    padding: 20px;
+}
+.feature-button {
+    margin-top: 15px;
+}
+
+.feature-row img {
+    padding: 20px;
+    border-radius: 100px;
+}

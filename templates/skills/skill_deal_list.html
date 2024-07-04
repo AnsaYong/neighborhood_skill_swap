@@ -4,6 +4,20 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Conditional Header -->
+    <div class="row mb-4">
+        <div class="col">
+            {% if request.path == '/skills/deals/provided/' %}
+            <div class="alert alert-light text-center" role="alert">
+                <h4 class="alert-heading">Deals I provided</h4>
+            </div>
+            {% elif request.path == '/skills/deals/requested/' %}
+            <div class="alert alert-light text-center" role="alert">
+                <h4 class="alert-heading">Deals I requested</h4>
+            </div>
+            {% endif %}
+        </div>
+    </div>
     <div class="row">
         <!-- Active deals -->
         <div class="col-md-4 mb-4">
@@ -18,6 +32,9 @@
                         <h4 class="card-subtitle mb-2">{{ deal.skill.name }}</h4>
                         {% if deal.provider != request.user %}
                             <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                        {% endif %}
+                        {% if deal.owner != request.user %}
+                        <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
                         {% endif %}
                         <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
                         <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
@@ -48,7 +65,9 @@
                             {% if deal.provider != request.user %}
                             <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
                             {% endif %}
-                            <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
+                            {% if deal.owner != request.user %}
+                            <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
+                            {% endif %}
                             <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
                             <p class="card-text"><strong>End Date:</strong> {{ deal.end_date|date:"F d, Y" }}</p>
                             {% if deal.provider != request.user %}
@@ -74,12 +93,14 @@
                     {% for deal in my_deals %}
                     {% if deal.status == 'cancelled' %}
                     <div class="mb-3">
-                        <h6 class="card-subtitle mb-2">{{ deal.skill.name }}</h6>
+                        <h4 class="card-subtitle mb-2">{{ deal.skill.name }}</h4>
                         {% if deal.provider != request.user %}
                         <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
                         {% endif %}
+                        {% if deal.owner != request.user %}
+                        <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
+                        {% endif %}
                         <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
-                        <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
                     </div>
                     <hr class="my-4"> <!-- Horizontal line -->
                     {% endif %}

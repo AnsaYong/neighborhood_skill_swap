@@ -43,9 +43,9 @@
                             <tr>
                                 <th>Rating</th>
                                 {% if reviews_count == 1 %}
-                                    <td>{{ skill.rating }}/5 ({{ reviews_count }} review)</td>
+                                    <td>{{ skill.rating|floatformat:2 }}/5 ({{ reviews_count }} review)</td>
                                 {% else %}
-                                    <td>{{ skill.rating }}/5 ({{ reviews_count }} reviews)</td>
+                                    <td>{{ skill.rating|floatformat:2 }}/5 ({{ reviews_count }} reviews)</td>
                                 {% endif %}
                             </tr>
                         </tbody>
@@ -57,7 +57,11 @@
                         <a href="{% url 'skill_delete' skill.pk %}" class="btn btn-danger">Delete</a>
                     {% endif %}
                     {% if user != skill.owner %}
-                        <a href="{% url 'skill_deal_new' skill.pk %}" class="btn btn-primary">Request Deal</a>
+                        {% if deal_exists %}
+                            <p class="text-warning">You have a pending deal request for this skill.</p>
+                        {% else %}
+                            <a href="{% url 'skill_deal_new' skill.pk %}" class="btn btn-primary">Request Deal</a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -76,7 +80,7 @@
                             <div class="alert alert-warning">
                                 <p>Request by: {{ deal.owner.username }}</p>
                                 <a href="{% url 'skill_deal_accept' deal.pk %}" class="btn btn-success">Accept Deal</a>
-                                <a href="#" class="btn btn-danger">Reject Deal</a>
+                                <a href="{% url 'skill_deal_reject' deal.pk %}" class="btn btn-danger">Reject Deal</a>
                             </div>
                         {% endfor %}
                     {% else %}
@@ -100,7 +104,7 @@
                         <div class="card-body">
                             <p><strong>Reviewer:</strong> {{ review.owner.username }}</p>
                             <p><strong>Date:</strong> {{ review.date }}</p>
-                            <p><strong>Rating:</strong> {{ review.rating }}/5</p>
+                            <p><strong>Rating:</strong> {{ review.rating|floatformat:2 }}/5</p>
                             <p><strong>Comment:</strong> {{ review.review }}</p>
                         </div>
                     </div>

@@ -4,6 +4,20 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Conditional Header -->
+    <div class="row mb-4">
+        <div class="col">
+            {% if request.path == '/skills/wanted' %}
+            <div class="alert alert-light text-center" role="alert">
+                <h4 class="alert-heading">Services I need</h4>
+            </div>
+            {% elif request.path == '/skills/offered' %}
+            <div class="alert alert-light text-center" role="alert">
+                <h4 class="alert-heading">Services I can provide</h4>
+            </div>
+            {% endif %}
+        </div>
+    </div>
     <div class="row">
         {% for skill in skills %}
         <div class="col-md-4 mb-4">
