@@ -1,13 +1,23 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ skill.name }}{% endblock %}
+{% block title %}Delete {{ skill.name }}{% endblock %}
 
 {% block content %}
-<h1>Delete</h1>
-<form action="" method="post">
-    {% csrf_token %}
-    <p>Are you sure you want to delete "{{ skill.name }}"?</p>
-    <button type="submit" class="btn btn-danger ml-2">Delete</button>
-    <a href="{% url 'skill_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-danger text-white">
+            <h3>Delete Skill</h3>
+        </div>
+        <div class="card-body">
+            <p class="lead">Are you sure you want to delete the skill "<strong>{{ skill.name }}</strong>"?</p>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <a href="{% url 'skills' skill_type=skill.skill_type %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

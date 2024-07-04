@@ -1,4 +1,4 @@
-from django.views import View
+from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpRequest
 from django.http.response import HttpResponse
@@ -270,8 +270,22 @@ class SkillDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     model = Skill
     template_name = "skills/skill_delete.html"
-    success_url = reverse_lazy("skill_list")
     context_object_name = "skill"
+
+    def get_success_url(self):
+        """A method to redirect to the skills page after deleting a skill.
+
+        Returns:
+            A string to represent the URL to redirect to after deleting the skill.
+        """
+        return reverse_lazy("skills", kwargs={"skill_type": "offered"})
+
+    def delete(self, request, *args, **kwargs):
+        """Override the delete method to use a dynamic URL for redirection."""
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
 
     def test_func(self):
         """A method to check if the current user is the owner of the skill.
