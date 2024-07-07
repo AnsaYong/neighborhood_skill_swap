@@ -1,5 +1,17 @@
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Savesssss Profile</button>
-</form>
+{% extends 'base_auth.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block content %}
+<div class="card-body">
+    <h2 class="card-title text-center">New Profile</h2>
+    <form method="post" enctype="multipart/form-data" class="mt-4">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="d-flex justify-content-center mt-4 mb-3">
+            <button class="btn btn-primary auth-btn py-2" type="submit">Save Profile</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

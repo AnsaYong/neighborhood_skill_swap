@@ -54,7 +54,7 @@ class CustomUserAdmin(UserAdmin):
         (None, {"fields": ("age",)}),
     )  # Add the location field to fields used in editing users
     add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {"fields": ("age",)}),
+        (None, {"fields": ("email",)}),
     )  # Add the location field to fields listed during signup
     inlines = [UserProfileInline]
 

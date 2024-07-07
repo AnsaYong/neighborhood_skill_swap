@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "skills.apps.SkillsConfig",
     "pages.apps.PagesConfig",
 ]
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

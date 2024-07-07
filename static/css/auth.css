@@ -1,0 +1,54 @@
+body {
+    background-color: #343232; /* Dark background color */
+    color: #ffffff; /* Light text color */
+}
+
+.auth-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 60px 40px;
+}
+
+.auth-card {
+    background-color: #191919; /* Slightly lighter dark color for card */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-card .form-control {
+    background-color: #333333; /* Darker input background */
+    color: #ffffff; /* Light text color for inputs */
+    border: 1px solid #555555; /* Border for inputs */
+}
+
+.auth-card .form-control::placeholder {
+    color: #cccccc; /* Lighter placeholder text color */
+}
+
+.auth-card label {
+    color: #ffffff; /* Light text color for labels */
+}
+
+.auth-btn {
+    width: 100%;
+    font-weight: 400;
+}
+
+.card-title {
+    margin-top: 20px; /* Space between title and top of the card */
+    margin-bottom: 30px; /* Space between title and the form */
+    color: #ffffff; /* Ensure card title is white */
+}
+
+.form-check-label {
+    color: #ffffff; /* Ensure checkbox label is white */
+}
+
+.reset-password a {
+    color: #ffffff; /* Ensure reset password link is white */
+}
+
+.text-body-secondary {
+    color: #ffffff; /* Ensure footer text is white */
+}
