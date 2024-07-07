@@ -233,9 +233,9 @@ class ProfileUpdateView(UserPassesTestMixin, UpdateView):
         return UserProfile.objects.get(user__id=self.kwargs["user_id"])
 
     def form_valid(self, form):
-        """Handle file uploads when saving the form."""
-        if "profile_image" in form.files:
-            form.instance.profile_image = form.files["profile_image"]
+        """Handle profile updates by updating the user profile object."""
+        if "profile_image" in self.request.FILES:
+            form.instance.profile_image = self.request.FILES["profile_image"]
         return super().form_valid(form)
 
     def get_success_url(self):

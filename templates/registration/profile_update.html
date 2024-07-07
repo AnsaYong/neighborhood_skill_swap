@@ -1,14 +1,18 @@
-{% extends 'base.html' %}
+{% extends 'base_auth.html' %}
 {% load crispy_forms_tags %}
 
 {% block title %}Update Profile{% endblock %}
 
 {% block content %}
-<h1>Profile Update</h1>
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-info ml-2">Update</button>
-    <a href="{% url 'profile' user.id %}" class="btn btn-secondary">Cancel</a>
-</form>
+<div class="card-body">
+    <h2 class="card-title text-center">Profile Update</h2>
+    <form action="" method="post" class="mt-4" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="d-flex justify-content-center mt-4">
+            <button type="submit" class="btn btn-primary auth-btn py-2 mr-2">Update</button>
+            <a href="{% url 'profile' user.id %}" class="btn btn-secondary auth-btn py-2">Cancel</a>
+        </div>
+    </form>
+</div>
 {% endblock %}
