@@ -8,7 +8,7 @@ The Neighborhood Skill Swap platform aims to facilitate skill exchange among nei
 
 ### User Registration and Authentication:
 
-- Sign up using email.
+- Sign up using email and a username.
 - Secure login/logout functionality with session management.
 - Password recovery/reset via email.
 
@@ -19,15 +19,14 @@ The Neighborhood Skill Swap platform aims to facilitate skill exchange among nei
 
 ### Skill Listings and Discovery:
 
-- Browse available skills by category and location.
+- Browse available skills by category and based on your listed skill requirements.
 - Advanced search and filter options to find specific skills or services.
 - Detailed view of each skill, including user reviews and ratings.
 
-### Booking System:
+### Easy Skill Deals:
 
-- Schedule time to exchange skills with other users.
+- Request a skill exchange deal with other users.
 - View, accept, or decline booking requests.
-- Integrate with personal calendars for reminders and scheduling.
 
 ### Time-Based Credit System:
 
@@ -60,12 +59,12 @@ The Neighborhood Skill Swap platform aims to facilitate skill exchange among nei
 
 - Django
 - Django REST Framework
+- Django Mixin for authentication
 - WebSockets (via Django Channels) for real-time communication
-- OAuth for authentication
 
 ### Database:
 
-- PostgreSQL
+- SQlite and PostgreSQL
 
 ## Setup and Installation
 
