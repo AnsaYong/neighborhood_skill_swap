@@ -172,3 +172,49 @@ class ProfileDecisionViewTests(TestCase):
         response = self.client.post(self.profile_decision_url, {"skip_profile": ""})
         self.assertRedirects(response, profile_url)
         self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+
+
+class ProfileCreateViewTests(TestCase):
+    """Tests for the ProfileCreateView."""
+
+    def setUp(self):
+        self.profile_create_url = reverse("profile_create")
+        self.user = get_user_model().objects.create_user(
+            username="testuser",
+            email="testuser@example.com",
+            password="testpassword123",
+        )
+        self.client.login(username="testuser", password="testpassword123")
+
+    def test_profile_create_view_get(self):
+        """Test that the profile create view renders correctly."""
+        response = self.client.get(self.profile_create_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "registration/profile_create.html")
+
+    def test_profile_create_view_post_valid_form(self):
+        """Test that a valid profile form creates a new profile."""
+        profile_data = {
+            "bio": "This is a test bio.",
+            "location": "Test Location",
+            "phone_number": "0844437287",
+        }
+        response = self.client.post(self.profile_create_url, profile_data)
+        profile_url = reverse("profile", kwargs={"user_id": self.user.id})
+        self.assertRedirects(response, profile_url)
+        self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
+        self.assertTrue(
+            UserProfile.objects.filter(
+                user=self.user,
+                bio=profile_data["bio"],
+                location=profile_data["location"],
+                phone_number=profile_data["phone_number"],
+            ).exists()
+        )
+
+    def test_profile_create_view_redirect_if_profile_exists(self):
+        """Test that the user is redirected if they already have a profile."""
+        UserProfile.objects.create(user=self.user, bio="Existing bio")
+        response = self.client.get(self.profile_create_url)
+        profile_url = reverse("profile", kwargs={"user_id": self.user.id})
+        self.assertRedirects(response, profile_url)
