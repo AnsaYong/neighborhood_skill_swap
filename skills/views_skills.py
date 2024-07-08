@@ -278,7 +278,10 @@ class SkillDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         Returns:
             A string to represent the URL to redirect to after deleting the skill.
         """
-        return reverse_lazy("skills", kwargs={"skill_type": "offered"})
+        if self.object.skill_type == "offered":
+            return reverse_lazy("skills", kwargs={"skill_type": "offered"})
+        elif self.object.skill_type == "wanted":
+            return reverse_lazy("skills", kwargs={"skill_type": "wanted"})
 
     def delete(self, request, *args, **kwargs):
         """Override the delete method to use a dynamic URL for redirection."""
