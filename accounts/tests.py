@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from .models import UserProfile
+
 
 class SignupViewTests(TestCase):
     """Tests for the user authentication views."""
@@ -135,3 +137,38 @@ class CustomLogoutViewTests(TestCase):
         response = self.client.get(self.logout_url)
         self.assertRedirects(response, self.home_url)
         self.assertFalse(response.wsgi_request.user.is_authenticated)
+
+
+class ProfileDecisionViewTests(TestCase):
+    """Tests for the ProfileDecisionView."""
+
+    def setUp(self):
+        self.profile_decision_url = reverse("profile_decision")
+        self.profile_create_url = reverse("profile_create")
+        self.user = get_user_model().objects.create_user(
+            username="testuser",
+            email="testuser@example.com",
+            password="testpassword123",
+        )
+        self.client.login(username="testuser", password="testpassword123")
+
+    def test_profile_decision_view_get(self):
+        """Test that the profile decision view correctly renders the
+        profile_decision.html."""
+        response = self.client.get(self.profile_decision_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "registration/profile_decision.html")
+
+    def test_profile_decision_view_post_create_profile(self):
+        """Test that the user is redirected to the profile create page if
+        they choose to create a profile."""
+        response = self.client.post(self.profile_decision_url, {"create_profile": ""})
+        self.assertRedirects(response, self.profile_create_url)
+
+    def test_profile_decision_view_post_skip_profile(self):
+        """Checks that a new UserProfile is created and the user is redirected
+        to their profile page when they choose to skip creating a profile."""
+        profile_url = reverse("profile", kwargs={"user_id": self.user.id})
+        response = self.client.post(self.profile_decision_url, {"skip_profile": ""})
+        self.assertRedirects(response, profile_url)
+        self.assertTrue(UserProfile.objects.filter(user=self.user).exists())
