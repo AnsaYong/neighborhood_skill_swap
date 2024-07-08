@@ -149,6 +149,14 @@ class SkillDeal(models.Model):
             content=f"{self.owner.username} has requested a deal for {self.skill.name}",
         )
 
+    def send_message_on_accept(self):
+        """Send a message to the provider when a skill deal is requested."""
+        Message.objects.create(
+            sender=self.provider,
+            receiver=self.owner,
+            content=f"{self.provider.username} has accepted your deal for {self.skill.name}",
+        )
+
     def __str__(self):
         """Return a string representation of the skill deal."""
         return f"{self.skill} - Request by {self.owner} - Provided by {self.provider}"
@@ -198,6 +206,7 @@ class Review(models.Model):
     review = models.TextField()
     rating = models.FloatField(default=5.0)
     date = models.DateTimeField(auto_now_add=True)
+    deal = models.OneToOneField(SkillDeal, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         """Save the rating of the skill which updates the rating for the skill"""
@@ -207,3 +216,24 @@ class Review(models.Model):
     def __str__(self):
         """Return a string representation of the rating."""
         return f"Review for {self.skill.name} - by {self.owner.username}"
+
+
+class Notification(models.Model):
+    """A model to represent a notification for a user.
+
+    Attributes:
+        user: A ForeignKey to represent the user who will receive the notification.
+        message: A CharField to represent the message of the notification.
+        timestamp: A DateTimeField to represent the date the notification was created.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notifications"
+    )
+    message = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        """Return a string representation of the notification."""
+        return self.message

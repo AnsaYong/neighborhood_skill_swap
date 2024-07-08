@@ -6,16 +6,22 @@
 {% block content %}
 <div class="container mt-1">
 
-    <!-- First Row: Date and Greeting Message -->
+    <!-- First Row: Date, Greeting Message, Notifications, and Credits -->
     <div class="row mt-1 mb-2">
         <div class="col-12 d-flex justify-content-between align-items-center">
+            <!-- Credits -->
+            <div class="ml-auto text-center">
+                <h4><strong>Credits:</strong> {{ user.profile.credits }}</h4>
+            </div>
+
             <!-- Greeting message -->
             <div class="text-center w-100">
                 <h5>{{ current_date }}</h5>
                 <h2>{{ greeting }}, {{ user.username }}!</h2>
             </div>
+            
             <!-- Notifications -->
-            <div class="text-right  d-flex justify-content-end align-items-center">
+            <div class="text-right d-flex justify-content-end align-items-center flex-grow-1">
                 <!-- Notification Bell -->
                 <div class="notification-bell position-relative d-inline-block mx-2">
                     <span class="notification-count position-absolute translate-middle badge rounded-pill bg-danger">
@@ -37,51 +43,51 @@
         </div>
     </div>
 
+
     <!-- Second Row: Discover skills by category -->
-    <div class="row mb-4">
-        <div class="col-8 mx-auto">
-            <div class="card border-secondary">
-                <div class="card-body">
-                    <h3 class="card-title text-center">Discover skills by Category</h3>
-                    <div class="row text-center">
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100 border-0">
-                                <div class="card-body p-2">
-                                    <div class="category-icon mb-2">
-                                        <i class="bi bi-laptop" style="font-size: 2rem;"></i>
-                                    </div>
-                                    <p class="category-text"><a href="{% url 'skill_by_category' 'Category 1' %}">Category 1</a></p>
+<div class="row mb-4">
+    <div class="col-8 mx-auto">
+        <div class="card border-secondary">
+            <div class="card-body">
+                <h3 class="card-title text-center">Discover skills by Category</h3>
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body p-2">
+                                <div class="category-icon mb-2 rounded-circle bg-primary text-white d-flex justify-content-center align-items-center">
+                                    <i class="bi bi-laptop" style="font-size: 2rem;"></i>
                                 </div>
+                                <p class="category-text"><a href="{% url 'skill_by_category' 'Category 1' %}">Category 1</a></p>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100 border-0">
-                                <div class="card-body p-2">
-                                    <div class="category-icon mb-2">
-                                        <i class="bi bi-brush" style="font-size: 2rem;"></i>
-                                    </div>
-                                    <p class="category-text"><a href="{% url 'skill_by_category' 'Category 2' %}">Category 2</a></p>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body p-2">
+                                <div class="category-icon mb-2 rounded-circle bg-success text-white">
+                                    <i class="bi bi-brush" style="font-size: 2rem;"></i>
                                 </div>
+                                <p class="category-text"><a href="{% url 'skill_by_category' 'Category 2' %}">Category 2</a></p>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100 border-0">
-                                <div class="card-body p-2">
-                                    <div class="category-icon mb-2">
-                                        <i class="bi bi-hammer" style="font-size: 2rem;"></i>
-                                    </div>
-                                    <p class="category-text"><a href="{% url 'skill_by_category' 'Category 3' %}">Category 3</a></p>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body p-2">
+                                <div class="category-icon mb-2 rounded-circle bg-warning text-dark">
+                                    <i class="bi bi-hammer" style="font-size: 2rem;"></i>
                                 </div>
+                                <p class="category-text"><a href="{% url 'skill_by_category' 'Category 3' %}">Category 3</a></p>
                             </div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="card h-100 border-0">
-                                <div class="card-body p-2">
-                                    <div class="category-icon mb-2">
-                                        <i class="bi bi-music-note" style="font-size: 2rem;"></i>
-                                    </div>
-                                    <p class="category-text"><a href="{% url 'skill_by_category' 'Category 4' %}">Category 4</a></p>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card h-100 border-0">
+                            <div class="card-body p-2">
+                                <div class="category-icon mb-2 rounded-circle bg-info text-white">
+                                    <i class="bi bi-music-note" style="font-size: 2rem;"></i>
                                 </div>
+                                <p class="category-text"><a href="{% url 'skill_by_category' 'Category 4' %}">Category 4</a></p>
                             </div>
                         </div>
                     </div>
@@ -89,6 +95,8 @@
             </div>
         </div>
     </div>
+</div>
+
 
     <!-- Third Row: Suggested Skills -->
     <div class="row mt-4">
@@ -157,7 +165,7 @@
     <!-- Fourth Row: Notifications -->
     <div class="row mt-4">
         <!-- Recent deals -->
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header bg-primary text-white">
                     <h5 class="card-title mb-0">Recent Deals</h5>
@@ -179,7 +187,7 @@
             </div>
         </div>
         <!-- Unread messages -->
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header bg-warning text-dark">
                     <h5 class="card-title mb-0">Unread Messages</h5>
@@ -196,6 +204,34 @@
                             No unread messages.
                         </li>
                         {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Summary stats for deals -->
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="card-title mb-0">Summary stats of provided deals</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Pending deals:
+                            <span class="badge bg-warning text-dark">{{ pending_deals }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Active deals:
+                            <span class="badge bg-success">{{ active_deals }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Completed deals:
+                            <span class="badge bg-info">{{ completed_deals }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Cancelled deals:
+                            <span class="badge bg-danger">{{ cancelled_deals }}</span>
+                        </li>
                     </ul>
                 </div>
             </div>

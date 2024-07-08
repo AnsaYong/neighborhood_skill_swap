@@ -7,11 +7,11 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils import timezone
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Count, Q
 
 from .models import UserProfile, CustomUser
 from .forms import UserProfileForm, CustomUserCreationForm
-from skills.models import Skill, SkillDeal, Message
+from skills.models import Skill, SkillDeal, Message, Notification
 
 
 class CustomLoginView(LoginView):
@@ -299,9 +299,12 @@ class DashboardView(UserPassesTestMixin, View):
         suggested_skills = paginator.get_page(page_number)
 
         # Recent deals and unread messages
-        recent_deals = SkillDeal.objects.filter(provider=user).order_by("-created_at")[
-            :3
-        ]
+        # Query all deals related to the user as either provider or owner
+        recent_deals = SkillDeal.objects.filter(
+            Q(provider=user) | Q(owner=user)
+        ).order_by("-created_at")[:3]
+
+        # Unread messages
         unread_messages = Message.objects.filter(receiver=user, is_read=False).order_by(
             "-timestamp"
         )[:3]
@@ -310,6 +313,20 @@ class DashboardView(UserPassesTestMixin, View):
         unread_messages_count = unread_messages.count()
         pending_deals_count = SkillDeal.objects.filter(
             provider=user, status=SkillDeal.PENDING
+        ).count()
+
+        # Counting all deals related to the user
+        pending_deals = SkillDeal.objects.filter(
+            provider=user, status=SkillDeal.PENDING
+        ).count()
+        active_deals = SkillDeal.objects.filter(
+            provider=user, status=SkillDeal.ACTIVE
+        ).count()
+        completed_deals = SkillDeal.objects.filter(
+            provider=user, status=SkillDeal.COMPLETED
+        ).count()
+        cancelled_deals = SkillDeal.objects.filter(
+            provider=user, status=SkillDeal.CANCELLED
         ).count()
 
         context = {
@@ -321,6 +338,10 @@ class DashboardView(UserPassesTestMixin, View):
             "unread_messages": unread_messages,
             "unread_messages_count": unread_messages_count,
             "pending_deals_count": pending_deals_count,
+            "pending_deals": pending_deals,
+            "active_deals": active_deals,
+            "completed_deals": completed_deals,
+            "cancelled_deals": cancelled_deals,
         }
         return render(request, "dashboard.html", context)
 

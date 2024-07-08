@@ -203,8 +203,14 @@ class SkillReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
         """
         form.instance.owner = self.request.user
         form.instance.skill = get_object_or_404(Skill, pk=self.kwargs["pk"])
+
+        skill_deal = SkillDeal.objects.get(
+            skill=form.instance.skill, owner=self.request.user
+        )
+        form.instance.deal = skill_deal
+
         response = super().form_valid(form)
-        print(f"My rating is: {form.instance.rating}")
+
         form.instance.skill.update_rating(form.instance.rating)
         return response
 
@@ -222,7 +228,7 @@ class SkillReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
     def get_success_url(self) -> str:
         """URL to redirect the user to the skill detail page after they've
         successfully reviewed the skill"""
-        return reverse_lazy("skill_detail", kwargs={"pk": self.kwargs["pk"]})
+        return reverse_lazy("requested_deals")
 
 
 class SkillUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

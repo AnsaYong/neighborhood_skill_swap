@@ -1,17 +1,19 @@
 from django.views import View
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.urls import reverse_lazy
 from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.views.generic import (
     ListView,
     DetailView,
     UpdateView,
 )
 
-from .models import Skill, SkillDeal, Review
+from .models import Skill, SkillDeal, Review, Notification
 from .forms import SkillDealForm
 
 
@@ -57,8 +59,18 @@ class SkillDealAcceptView(LoginRequiredMixin, View):
         to ACTIVE.
         """
         deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
-        deal.accept_deal()
-        return redirect("provided_deals")
+
+        if request.user == deal.provider:
+            deal.accept_deal()
+
+            # Notify the owner that the deal has been accepted
+            deal.send_message_on_accept()
+
+            messages.success(request, "Deal accepted successfully!")
+        else:
+            messages.error(request, "You are not authorized to accept this deal.")
+
+        return redirect("dashboard", user_id=request.user.id)
 
 
 class SkillDealListView(LoginRequiredMixin, ListView):
@@ -68,6 +80,7 @@ class SkillDealListView(LoginRequiredMixin, ListView):
     model = SkillDeal
     template_name = "skills/skill_deal_list.html"
     context_object_name = "my_deals"
+    paginate_by = 4
 
     def get_queryset(self):
         """Return a list of skill deals for the current logged-in user."""
@@ -81,19 +94,77 @@ class SkillDealListView(LoginRequiredMixin, ListView):
         else:
             queryset = SkillDeal.objects.filter(Q(provider=user) | Q(owner=user))
 
-        reviewed_skills = Review.objects.filter(owner=user).values_list(
-            "skill_id", flat=True
-        )
-        queryset = queryset.exclude(
-            Q(status=SkillDeal.COMPLETED) & Q(skill_id__in=reviewed_skills)
-        )
-
         return queryset
 
     def get_context_data(self, **kwargs):
         """Add the filter type to the context."""
         context = super().get_context_data(**kwargs)
         context["filter_type"] = self.kwargs.get("filter_type", "all")
+
+        # Categorize deals by status
+        my_deals = self.get_queryset()
+
+        # Paginate all deals
+        paginator = Paginator(my_deals, self.paginate_by)
+        page_number = self.request.GET.get("page")
+        try:
+            my_deals_paginated = paginator.page(page_number)
+        except PageNotAnInteger:
+            my_deals_paginated = paginator.page(1)
+        except EmptyPage:
+            my_deals_paginated = paginator.page(paginator.num_pages)
+
+        context["my_deals"] = my_deals_paginated
+
+        # Filter and paginate active deals
+        active_deals = my_deals.filter(status=SkillDeal.ACTIVE)
+        paginator_active = Paginator(active_deals, self.paginate_by)
+        page_number_active = self.request.GET.get("page_active")
+        try:
+            active_deals_paginated = paginator_active.page(page_number_active)
+        except PageNotAnInteger:
+            active_deals_paginated = paginator_active.page(1)
+        except EmptyPage:
+            active_deals_paginated = paginator_active.page(paginator_active.num_pages)
+
+        context["active_deals"] = active_deals_paginated
+
+        # Filter and paginate completed deals
+        completed_deals = my_deals.filter(status=SkillDeal.COMPLETED)
+        paginator_completed = Paginator(completed_deals, self.paginate_by)
+        page_number_completed = self.request.GET.get("page_completed")
+        try:
+            completed_deals_paginated = paginator_completed.page(page_number_completed)
+        except PageNotAnInteger:
+            completed_deals_paginated = paginator_completed.page(1)
+        except EmptyPage:
+            completed_deals_paginated = paginator_completed.page(
+                paginator_completed.num_pages
+            )
+
+        context["completed_deals"] = completed_deals_paginated
+
+        # Filter and paginate cancelled deals
+        cancelled_deals = my_deals.filter(status=SkillDeal.CANCELLED)
+        paginator_cancelled = Paginator(cancelled_deals, self.paginate_by)
+        page_number_cancelled = self.request.GET.get("page_cancelled")
+        try:
+            cancelled_deals_paginated = paginator_cancelled.page(page_number_cancelled)
+        except PageNotAnInteger:
+            cancelled_deals_paginated = paginator_cancelled.page(1)
+        except EmptyPage:
+            cancelled_deals_paginated = paginator_cancelled.page(
+                paginator_cancelled.num_pages
+            )
+
+        context["cancelled_deals"] = cancelled_deals_paginated
+
+        # Add review status for completed deals
+        reviewed_deals = Review.objects.filter(deal__in=completed_deals).values_list(
+            "deal_id", flat=True
+        )
+        context["reviewed_deals"] = reviewed_deals
+
         return context
 
 
@@ -103,9 +174,6 @@ class ProvidedDealsView(SkillDealListView):
     def get_queryset(self):
         """Return a list of skill deals where the user is the provider."""
         user = self.request.user
-        rated_skills = Review.objects.filter(owner=user).values_list(
-            "skill_id", flat=True
-        )
 
         return SkillDeal.objects.filter(
             provider=user,
@@ -115,7 +183,7 @@ class ProvidedDealsView(SkillDealListView):
                 SkillDeal.COMPLETED,
                 SkillDeal.CANCELLED,
             ],
-        ).exclude(Q(status=SkillDeal.COMPLETED) & Q(skill_id__in=rated_skills))
+        )
 
 
 class RequestedDealsView(SkillDealListView):
@@ -124,9 +192,6 @@ class RequestedDealsView(SkillDealListView):
     def get_queryset(self):
         """Return a list of skill deals where the user is the owner."""
         user = self.request.user
-        rated_skills = Review.objects.filter(owner=user).values_list(
-            "skill_id", flat=True
-        )
 
         queryset = SkillDeal.objects.filter(
             owner=user,
@@ -136,7 +201,7 @@ class RequestedDealsView(SkillDealListView):
                 SkillDeal.COMPLETED,
                 SkillDeal.CANCELLED,
             ],
-        ).exclude(Q(status=SkillDeal.COMPLETED) & Q(skill_id__in=rated_skills))
+        )
 
         return queryset
 
@@ -205,7 +270,7 @@ class SkillDealCompleteView(LoginRequiredMixin, UpdateView):
         """
         deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
         deal.mark_complete()
-        return redirect("skill_deal_list")
+        return redirect("requested_deals")
 
 
 class SkillDealRejectView(LoginRequiredMixin, View):

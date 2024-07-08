@@ -7,106 +7,199 @@
     <!-- Conditional Header -->
     <div class="row mb-4">
         <div class="col">
-            {% if request.path == '/skills/deals/provided/' %}
+            {% if filter_type == "provided" %}
             <div class="alert alert-light text-center" role="alert">
                 <h4 class="alert-heading">Deals I provided</h4>
             </div>
-            {% elif request.path == '/skills/deals/requested/' %}
+            {% elif filter_type == "requested" %}
             <div class="alert alert-light text-center" role="alert">
                 <h4 class="alert-heading">Deals I requested</h4>
+            </div>
+            {% else %}
+            <div class="alert alert-light text-center" role="alert">
+                <h4 class="alert-heading">All My Deals</h4>
             </div>
             {% endif %}
         </div>
     </div>
-    <div class="row">
-        <!-- Active deals -->
-        <div class="col-md-4 mb-4">
+
+    <!-- Active Deals -->
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header bg-success text-white">
-                    <h5 class="card-title">Active Deals</h5>
+                    <h5 class="card-title mb-0">Active Deals</h5>
                 </div>
                 <div class="card-body">
-                    {% for deal in my_deals %}
-                    {% if deal.status == 'active' %}
-                    <div class="mb-3">
-                        <h4 class="card-subtitle mb-2">{{ deal.skill.name }}</h4>
-                        {% if deal.provider != request.user %}
-                            <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
-                        {% endif %}
-                        {% if deal.owner != request.user %}
-                        <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
-                        {% endif %}
-                        <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
-                        <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
-                        {% if deal.owner == request.user %}
-                            <a href="{% url 'skill_deal_complete' deal.pk %}" class="btn btn-success btn-sm">Complete Deal</a>
+                    <div class="row">
+                        {% if active_deals|length == 0 %}
+                        <div class="col-12">
+                            <p class="text-center">You have no active deals currently.</p>
+                        </div>
+                        {% else %}
+                            {% for deal in active_deals %}
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-subtitle mb-2">{{ deal.skill.name }}</h5>
+                                        {% if deal.provider != request.user %}
+                                        <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                                        {% endif %}
+                                        {% if deal.owner != request.user %}
+                                        <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
+                                        {% endif %}
+                                        <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
+                                        <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
+                                        {% if deal.owner == request.user %}
+                                        <a href="{% url 'skill_deal_complete' deal.pk %}" class="btn btn-success btn-sm">Complete Deal</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
                         {% endif %}
                     </div>
-                    <hr class="my-4"> <!-- Horizontal line -->
+                    {% if active_deals.has_other_pages %}
+                    <nav aria-label="Active Deals Pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if active_deals.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page_active={{ active_deals.previous_page_number }}">Previous</a>
+                            </li>
+                            {% endif %}
+                            {% for num in active_deals.paginator.page_range %}
+                            <li class="page-item {% if num == active_deals.number %}active{% endif %}">
+                                <a class="page-link" href="?page_active={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+                            {% if active_deals.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page_active={{ active_deals.next_page_number }}">Next</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                     {% endif %}
-                    {% empty %}
-                    <p>You have no active deals currently.</p>
-                    {% endfor %}
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Completed deals -->
-        <div class="col-md-4 mb-4">
+    <!-- Completed Deals -->
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header bg-info text-white">
-                    <h5 class="card-title">Completed Deals</h5>
+                    <h5 class="card-title mb-0">Completed Deals</h5>
                 </div>
                 <div class="card-body">
-                    {% for deal in my_deals %}
-                        {% if deal.status == 'completed' %}
-                        <div class="mb-3">
-                            <h4 class="card-subtitle mb-2">{{ deal.skill.name }}</h4>
-                            {% if deal.provider != request.user %}
-                            <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
-                            {% endif %}
-                            {% if deal.owner != request.user %}
-                            <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
-                            {% endif %}
-                            <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
-                            <p class="card-text"><strong>End Date:</strong> {{ deal.end_date|date:"F d, Y" }}</p>
-                            {% if deal.provider != request.user %}
-                            <a href="{% url 'skill_review' pk=deal.skill.pk %}" class="btn btn-primary">Rate Skill</a>
-                            {% endif %}
+                    <div class="row">
+                        {% if completed_deals|length == 0 %}
+                        <div class="col-12">
+                            <p class="text-center">No completed deals to review.</p>
                         </div>
-                        <hr class="my-4"> <!-- Horizontal line -->
+                        {% else %}
+                            {% for deal in completed_deals %}
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-subtitle mb-2">{{ deal.skill.name }}</h5>
+                                        {% if deal.provider != request.user %}
+                                        <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                                        {% endif %}
+                                        {% if deal.owner != request.user %}
+                                        <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
+                                        {% endif %}
+                                        <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
+                                        <p class="card-text"><strong>End Date:</strong> {{ deal.end_date|date:"F d, Y" }}</p>
+                                        {% if deal.provider != request.user and deal.id not in reviewed_deals %}
+                                        <a href="{% url 'skill_review' pk=deal.skill.pk %}" class="btn btn-primary">Rate Skill</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% if completed_deals.has_other_pages %}
+                    <nav aria-label="Completed Deals Pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if completed_deals.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page_completed={{ completed_deals.previous_page_number }}">Previous</a>
+                            </li>
+                            {% endif %}
+                            {% for num in completed_deals.paginator.page_range %}
+                            <li class="page-item {% if num == completed_deals.number %}active{% endif %}">
+                                <a class="page-link" href="?page_completed={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+                            {% if completed_deals.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page_completed={{ completed_deals.next_page_number }}">Next</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                     {% endif %}
-                    {% empty %}
-                    <p>No completed deals to review.</p>
-                    {% endfor %}
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Cancelled deals -->
-        <div class="col-md-4 mb-4">
+    <!-- Cancelled Deals -->
+    <div class="row mb-4">
+        <div class="col-12">
             <div class="card">
                 <div class="card-header bg-danger text-white">
-                    <h5 class="card-title">Cancelled Deals</h5>
+                    <h5 class="card-title mb-0">Cancelled Deals</h5>
                 </div>
                 <div class="card-body">
-                    {% for deal in my_deals %}
-                    {% if deal.status == 'cancelled' %}
-                    <div class="mb-3">
-                        <h4 class="card-subtitle mb-2">{{ deal.skill.name }}</h4>
-                        {% if deal.provider != request.user %}
-                        <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                    <div class="row">
+                        {% if cancelled_deals|length == 0 %}
+                        <div class="col-12">
+                            <p class="text-center">No cancelled deals found.</p>
+                        </div>
+                        {% else %}
+                            {% for deal in cancelled_deals %}
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-subtitle mb-2">{{ deal.skill.name }}</h5>
+                                        {% if deal.provider != request.user %}
+                                        <p class="card-text"><strong>Provider:</strong> {{ deal.provider.username }}</p>
+                                        {% endif %}
+                                        {% if deal.owner != request.user %}
+                                        <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
+                                        {% endif %}
+                                        <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
                         {% endif %}
-                        {% if deal.owner != request.user %}
-                        <p class="card-text"><strong>Client:</strong> {{ deal.owner.username }}</p>
-                        {% endif %}
-                        <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
                     </div>
-                    <hr class="my-4"> <!-- Horizontal line -->
+                    {% if cancelled_deals.has_other_pages %}
+                    <nav aria-label="Cancelled Deals Pagination">
+                        <ul class="pagination justify-content-center">
+                            {% if cancelled_deals.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page_cancelled={{ cancelled_deals.previous_page_number }}">Previous</a>
+                            </li>
+                            {% endif %}
+                            {% for num in cancelled_deals.paginator.page_range %}
+                            <li class="page-item {% if num == cancelled_deals.number %}active{% endif %}">
+                                <a class="page-link" href="?page_cancelled={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endfor %}
+                            {% if cancelled_deals.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page_cancelled={{ cancelled_deals.next_page_number }}">Next</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                     {% endif %}
-                    {% empty %}
-                    <p>No cancelled deals found.</p>
-                    {% endfor %}
                 </div>
             </div>
         </div>
