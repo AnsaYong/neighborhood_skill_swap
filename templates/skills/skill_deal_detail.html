@@ -44,8 +44,11 @@
                             {% endif %}
                         </tbody>
                     </table>
-                    <div class="mt-4">
-                        <a href="{% url 'send_message' skill_deal.pk %}" class="btn btn-primary">Send Message</a> 
+                    <div class="mt-4 d-flex">
+                        <a href="{% url 'send_message' skill_deal.pk %}" class="btn btn-primary me-2">Send Message</a>
+                        {% if skill_deal.owner == request.user %}
+                        <a href="{% url 'skill_deal_complete' skill_deal.pk %}" class="btn btn-success btn-sm">Complete Deal</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

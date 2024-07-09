@@ -23,7 +23,11 @@ from .views_messages import MessageListView, MessageReadView, MessageCreateView
 
 urlpatterns = [
     # Skill urls
-    path("review/<int:pk>/", SkillReviewCreateView.as_view(), name="skill_review"),
+    path(
+        "review/<int:pk>/<int:deal_pk>/",
+        SkillReviewCreateView.as_view(),
+        name="skill_review",
+    ),
     path("<int:pk>/delete/", SkillDeleteView.as_view(), name="skill_delete"),
     path("<int:pk>/edit/", SkillUpdateView.as_view(), name="skill_edit"),
     path("<int:pk>/", SkillDetailView.as_view(), name="skill_detail"),

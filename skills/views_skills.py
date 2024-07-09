@@ -204,9 +204,7 @@ class SkillReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView)
         form.instance.owner = self.request.user
         form.instance.skill = get_object_or_404(Skill, pk=self.kwargs["pk"])
 
-        skill_deal = SkillDeal.objects.get(
-            skill=form.instance.skill, owner=self.request.user
-        )
+        skill_deal = get_object_or_404(SkillDeal, pk=self.kwargs["deal_pk"])
         form.instance.deal = skill_deal
 
         response = super().form_valid(form)

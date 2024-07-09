@@ -119,7 +119,7 @@
                                         <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
                                         <p class="card-text"><strong>End Date:</strong> {{ deal.end_date|date:"F d, Y" }}</p>
                                         {% if deal.provider != request.user and deal.id not in reviewed_deals %}
-                                        <a href="{% url 'skill_review' pk=deal.skill.pk %}" class="btn btn-primary">Rate Skill</a>
+                                        <a href="{% url 'skill_review' pk=deal.skill.pk deal_pk=deal.pk %}" class="btn btn-primary">Rate Skill</a>
                                         {% endif %}
                                     </div>
                                 </div>

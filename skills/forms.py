@@ -116,7 +116,7 @@ class ReviewForm(forms.ModelForm):
     """
 
     rating = forms.ChoiceField(
-        choices=[(i, str(i)) for i in range(1, 6)],
+        choices=[(i, str(i)) for i in range(5, 0, -1)],
         label="Rating",
         widget=forms.RadioSelect(attrs={"class": "rating"}),
     )
