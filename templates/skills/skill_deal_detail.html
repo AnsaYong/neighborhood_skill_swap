@@ -12,30 +12,39 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">{{ skill_deal.skill.name }}</h5>
-                    <div class="deal-item">
-                        {% if user == skill_deal.provider %}
-                        <span class="label"><strong>Requester:</strong></span> {{ skill_deal.owner.username }}
-                        {% elif user == skill_deal.owner %}
-                        <span class="label"><strong>Provider:</strong></span> {{ skill_deal.provider.username }}
-                        {% endif %}
-                    </div>
-                    <div class="deal-item">
-                        <span class="label"><strong>Status:</strong></span> {{ skill_deal.get_status_display }}
-                    </div>
-                    <div class="deal-item">
-                        <span class="label"><strong>Date Created:</strong></span> {{ skill_deal.created_at|date:"F j, Y" }}
-                    </div>
-                    {% if skill_deal.status == 'active' or skill_deal.status == 'completed' %}
-                    <div class="deal-item">
-                        <span class="label"><strong>Date Started:</strong></span> {{ skill_deal.start_date|date:"F j, Y" }}
-                    </div>
-                    {% endif %}
-                    {% if skill_deal.status == 'completed' %}
-                    <div class="deal-item">
-                        <span class="label"><strong>Date Completed:</strong></span> {{ skill_deal.end_date|date:"F j, Y" }}
-                    </div>
-                    {% endif %}
-                    <div class="deal-item mt-4">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td><strong>Requester:</strong></td>
+                                <td>{{ skill_deal.owner.username }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Provider:</strong></td>
+                                <td>{{ skill_deal.provider.username }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status:</strong></td>
+                                <td>{{ skill_deal.get_status_display }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Date Created:</strong></td>
+                                <td>{{ skill_deal.created_at|date:"F j, Y" }}</td>
+                            </tr>
+                            {% if skill_deal.status == 'active' or skill_deal.status == 'completed' %}
+                            <tr>
+                                <td><strong>Date Started:</strong></td>
+                                <td>{{ skill_deal.start_date|date:"F j, Y" }}</td>
+                            </tr>
+                            {% endif %}
+                            {% if skill_deal.status == 'completed' %}
+                            <tr>
+                                <td><strong>Date Completed:</strong></td>
+                                <td>{{ skill_deal.end_date|date:"F j, Y" }}</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                    <div class="mt-4">
                         <a href="{% url 'send_message' skill_deal.pk %}" class="btn btn-primary">Send Message</a> 
                     </div>
                 </div>
@@ -61,11 +70,12 @@
                         <div class="input-group">
                             {{ form.content }}
                             <div class="input-group-append">
-                                <button type="submit" class="btn btn-primary">Send</button>
+                                <button type="submit" class="btn btn-primary">Reply</button>
                             </div>
                         </div>
                     </form>
                 </div>
+            </div>
         </div>
     </div>
 </div>
