@@ -144,6 +144,7 @@ class SkillDeal(models.Model):
     def send_message_on_request(self):
         """Send a message to the provider when a skill deal is requested."""
         Message.objects.create(
+            skill_deal=self,
             sender=self.owner,
             receiver=self.provider,
             content=f"{self.owner.username} has requested a deal for {self.skill.name}",
@@ -152,6 +153,7 @@ class SkillDeal(models.Model):
     def send_message_on_accept(self):
         """Send a message to the provider when a skill deal is requested."""
         Message.objects.create(
+            skill_deal=self,
             sender=self.provider,
             receiver=self.owner,
             content=f"{self.provider.username} has accepted your deal for {self.skill.name}",
@@ -180,9 +182,15 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name="received_messages",
     )
+    skill_deal = models.ForeignKey(
+        SkillDeal, on_delete=models.CASCADE, related_name="messages_for_deal"
+    )
     content = models.TextField()
     is_read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
+    reply_to = models.ForeignKey(
+        "self", null=True, blank=True, on_delete=models.CASCADE
+    )
 
     def __str__(self):
         """Return a string representation of the message."""

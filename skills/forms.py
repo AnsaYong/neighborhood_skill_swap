@@ -96,7 +96,16 @@ class MessageForm(forms.ModelForm):
         """
 
         model = Message
-        fields = ["content", "sender", "receiver"]
+        fields = ["content", "reply_to"]
+        widgets = {
+            "content": forms.Textarea(
+                attrs={
+                    "rows": 3,
+                    "placeholder": "Type your message here",
+                }
+            ),
+            "reply_to": forms.HiddenInput(),  # Hidden field for reply_to message ID
+        }
 
 
 class ReviewForm(forms.ModelForm):

@@ -13,7 +13,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from .models import Skill, SkillDeal, Review, Notification
+from .models import Skill, SkillDeal, Review, Message
 from .forms import SkillDealForm
 
 
@@ -220,6 +220,19 @@ class SkillDealDetailView(LoginRequiredMixin, DetailView):
     model = SkillDeal
     template_name = "skills/skill_deal_detail.html"
     context_object_name = "skill_deal"
+
+    def get_context_data(self, **kwargs):
+        """Add the review status to the context."""
+        context = super().get_context_data(**kwargs)
+
+        skill_deal = SkillDeal.objects.get(pk=self.kwargs["pk"])
+        context["skill_deal"] = skill_deal
+
+        # Get all messages for the current deal
+        messages = Message.objects.filter(skill_deal=skill_deal)
+        context["messages"] = messages
+
+        return context
 
 
 class SkillDealUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

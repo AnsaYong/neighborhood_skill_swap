@@ -60,7 +60,7 @@
                         {% if deal_exists %}
                             <p class="text-warning">You have a pending deal request for this skill.</p>
                         {% else %}
-                            <a href="{% url 'skill_deal_new' skill.pk %}" class="btn btn-primary">Request Deal</a>
+                            <a href="{% url 'skill_deal_new' skill.pk %}" class="btn btn-primary">Request Deal</a> 
                         {% endif %}
                     {% endif %}
                 </div>

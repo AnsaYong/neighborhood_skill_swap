@@ -168,13 +168,23 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="card-title mb-0">Recent Deals</h5>
+                    <h5 class="card-title mb-0 text-center">Notifications</h5>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
                         {% for deal in recent_deals %}
                         <li class="list-group-item">
-                            <strong>{{ deal.owner.username }}</strong> requested from <strong>{{ deal.provider.username }}</strong> - <em>{{ deal.skill.name }}</em> <br>
+                            {% if deal.status == 'pending' %}
+                                <strong>{{ deal.owner.username }}</strong> requested a deal from <strong>{{ deal.provider.username }}</strong> for <em>{{ deal.skill.name }}</em>. Status: Pending.
+                            {% elif deal.status == 'active' %}
+                                <strong>{{ deal.owner.username }}</strong>'s deal with <strong>{{ deal.provider.username }}</strong> for <em>{{ deal.skill.name }}</em> is currently Active.
+                            {% elif deal.status == 'completed' %}
+                                <strong>{{ deal.owner.username }}</strong>'s deal with <strong>{{ deal.provider.username }}</strong> for <em>{{ deal.skill.name }}</em> has been Completed.
+                            {% elif deal.status == 'cancelled' %}
+                                <strong>{{ deal.owner.username }}</strong>'s deal with <strong>{{ deal.provider.username }}</strong> for <em>{{ deal.skill.name }}</em> has been Cancelled.
+                            {% else %}
+                                <strong>{{ deal.owner.username }}</strong> requested from <strong>{{ deal.provider.username }}</strong> - <em>{{ deal.skill.name }}</em> <br>
+                            {% endif %}
                             <small class="text-muted">{{ deal.created_at|date:"F j, Y, g:i a" }}</small>
                         </li>
                         {% empty %}
@@ -185,12 +195,12 @@
                     </ul>
                 </div>
             </div>
-        </div>
+        </div>        
         <!-- Unread messages -->
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header bg-warning text-dark">
-                    <h5 class="card-title mb-0">Unread Messages</h5>
+                    <h5 class="card-title mb-0 text-center">Unread Messages</h5>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">
@@ -203,7 +213,7 @@
                         <li class="list-group-item text-center text-muted">
                             No unread messages.
                         </li>
-                        {% endfor %}
+                        {% endfor %} 
                     </ul>
                 </div>
             </div>
@@ -212,7 +222,7 @@
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <div class="card-header bg-secondary text-white">
-                    <h5 class="card-title mb-0">Summary stats of provided deals</h5>
+                    <h5 class="card-title mb-0 text-center">Summary of Provided Deals</h5>
                 </div>
                 <div class="card-body">
                     <ul class="list-group list-group-flush">

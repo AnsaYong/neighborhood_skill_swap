@@ -7,7 +7,7 @@
         {% for message in messages %}
         <a href="{% url 'message_read' message.pk %}" class="list-group-item list-group-item-action {% if not message.is_read %}list-group-item-info unread-message{% endif %}">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ message.sender.username }}</h5>
+                <h5 class="mb-1">{{ message.sender.username }}</h5> 
                 <small>{{ message.timestamp }}</small>
             </div>
             <p class="mb-1">{{ message.content }}</p>

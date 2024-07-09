@@ -7,21 +7,26 @@
     <!-- Conditional Header -->
     <div class="row mb-4">
         <div class="col">
-            {% if filter_type == "provided" %}
+            {% if request.resolver_match.url_name == "provided_deals" %}
             <div class="alert alert-light text-center" role="alert">
-                <h4 class="alert-heading">Deals I provided</h4>
+                <h4 class="alert-heading">Deals I Provided</h4>
             </div>
-            {% elif filter_type == "requested" %}
+            {% elif request.resolver_match.url_name == "requested_deals" %}
             <div class="alert alert-light text-center" role="alert">
-                <h4 class="alert-heading">Deals I requested</h4>
+                <h4 class="alert-heading">Deals I Requested</h4>
+            </div>
+            {% elif request.resolver_match.url_name == "all_deals" %}
+            <div class="alert alert-light text-center" role="alert">
+                <h4 class="alert-heading">All My Deals</h4>
             </div>
             {% else %}
             <div class="alert alert-light text-center" role="alert">
-                <h4 class="alert-heading">All My Deals</h4>
+                <h4 class="alert-heading">Deals</h4>
             </div>
             {% endif %}
         </div>
     </div>
+    
 
     <!-- Active Deals -->
     <div class="row mb-4">
@@ -50,13 +55,14 @@
                                         {% endif %}
                                         <p class="card-text"><strong>Status:</strong> {{ deal.get_status_display }}</p>
                                         <p class="card-text"><strong>Start Date:</strong> {{ deal.start_date|date:"F d, Y" }}</p>
+                                        <a href="{% url 'skill_deal_detail' deal.pk %}" class="btn btn-info btn-sm">View Details</a> 
                                         {% if deal.owner == request.user %}
                                         <a href="{% url 'skill_deal_complete' deal.pk %}" class="btn btn-success btn-sm">Complete Deal</a>
                                         {% endif %}
                                     </div>
                                 </div>
                             </div>
-                            {% endfor %}
+                            {% endfor %} 
                         {% endif %}
                     </div>
                     {% if active_deals.has_other_pages %}

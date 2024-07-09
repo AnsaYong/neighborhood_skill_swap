@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Message Detail{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Message Detail</h2>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>From:</strong> {{ message.sender.username }}</p>
+            <p><strong>Message:</strong> {{ message.content }}</p>
+            <p><strong>Sent:</strong> {{ message.timestamp }}</p>
+            {% if not message.is_read %}
+                <p><strong>Status:</strong> Unread</p>
+            {% endif %}
+            <a href="{% url 'reply_message' skill_deal.pk message.pk %}" class="btn btn-primary">Reply</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

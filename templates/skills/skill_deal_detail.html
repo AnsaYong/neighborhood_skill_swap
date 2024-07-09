@@ -1,65 +1,72 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}{{ skill_deal.skill.name }} Deal Detail{% endblock %}
+{% block title %}{{ skill_deal.skill.name }} Deal{% endblock %}
 
 {% block content %}
-<div class="deal-details">
-    <h2>Skill Deal Details</h2>
-    <div class="deal-item">
-        <span class="label">Skill Name:</span> {{ skill_deal.skill.name }}
+<div class="deal-details container mt-5">
+    <div class="row">
+        <!-- Deal Details Section -->
+        <div class="col-md-6">
+            <h2 class="mb-4">{{ skill_deal.skill.name }} Deal Detail</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ skill_deal.skill.name }}</h5>
+                    <div class="deal-item">
+                        {% if user == skill_deal.provider %}
+                        <span class="label"><strong>Requester:</strong></span> {{ skill_deal.owner.username }}
+                        {% elif user == skill_deal.owner %}
+                        <span class="label"><strong>Provider:</strong></span> {{ skill_deal.provider.username }}
+                        {% endif %}
+                    </div>
+                    <div class="deal-item">
+                        <span class="label"><strong>Status:</strong></span> {{ skill_deal.get_status_display }}
+                    </div>
+                    <div class="deal-item">
+                        <span class="label"><strong>Date Created:</strong></span> {{ skill_deal.created_at|date:"F j, Y" }}
+                    </div>
+                    {% if skill_deal.status == 'active' or skill_deal.status == 'completed' %}
+                    <div class="deal-item">
+                        <span class="label"><strong>Date Started:</strong></span> {{ skill_deal.start_date|date:"F j, Y" }}
+                    </div>
+                    {% endif %}
+                    {% if skill_deal.status == 'completed' %}
+                    <div class="deal-item">
+                        <span class="label"><strong>Date Completed:</strong></span> {{ skill_deal.end_date|date:"F j, Y" }}
+                    </div>
+                    {% endif %}
+                    <div class="deal-item mt-4">
+                        <a href="{% url 'send_message' skill_deal.pk %}" class="btn btn-primary">Send Message</a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Message Exchange Section -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Message Exchange</h4>
+                </div>
+                <div class="card-body" id="message-history" style="height: 400px; overflow-y: auto;">
+                    {% for message in messages %}
+                    <div class="message {% if message.sender == request.user %}sent-message{% else %}received-message{% endif %}">
+                        <strong>{{ message.sender.username }}:</strong> {{ message.content }} <br>
+                        <small class="text-muted">{{ message.timestamp|date:"M d, Y H:i" }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="card-footer">
+                    <form id="message-form" method="post" action="{% url 'send_message' skill_deal.pk %}">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            {{ form.content }}
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-primary">Send</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+        </div>
     </div>
-    <div class="deal-item">
-        {% if user == skill_deal.provider %}
-            <span class="label">Rquester:</span> {{ skill_deal.owner }}
-        {% elif user == skill_deal.owner %}
-            <span class="label">Provider:</span> {{ skill_deal.provider }}
-        {% endif %}
-    </div>
-    <div class="deal-item">
-        <span class="label">Status:</span> {{ skill_deal.status }}
-    </div>
-    {% if skill_deal.status == 'pending' %}
-    <div class="deal-item">
-        <span class="label">Date Created:</span> {{ skill_deal.created_at | date:"F j, Y" }}
-    </div>
-    {% endif %}
-    {% if skill_deal.status == 'active' %}
-    <div class="deal-item">
-        <span class="label">Date Created:</span> {{ skill_deal.created_at | date:"F j, Y" }}
-    </div>
-    <div class="deal-item">
-        <span class="label">Date Started:</span> {{ skill_deal.start_date | date:"F j, Y" }}
-    </div>
-    {% endif %}
-    {% if skill_deal.status == 'completed' %}
-    <div class="deal-item">
-        <span class="label">Date Created:</span> {{ skill_deal.created_at | date:"F j, Y" }}
-    </div>
-    <div class="deal-item">
-        <span class="label">Date Started:</span> {{ skill_deal.start_date | date:"F j, Y" }}
-    </div>
-    <div class="deal-item">
-        <span class="label">Date Completed:</span> {{ skill_deal.end_date | date:"F j, Y" }}
-    </div>
-    {% endif %}
 </div>
-
-<div>
-    {% if user == skill_deal.owner %}
-        {% if skill_deal.status == 'completed' %}
-            <a href="{% url 'skill_review' skill_deal.skill.pk %}">Review</a>
-        {% elif skill_deal.status == 'active' %}
-            <a href="{% url 'skill_deal_complete' skill_deal.pk %}" class="btn btn-primary">Complete</a>
-        {% endif %}
-    {% elif user == skill_deal.provider %}
-        {% if skill_deal.status == 'pending' %}
-            <a href="{% url 'skill_deal_accept' skill_deal.pk %}" class="btn btn-primary">Accept</a> |
-            <a href="#" class="btn btn-danger">Reject</a>
-        {% elif skill_deal.status == 'active' %}
-            <a href="#" class="btn btn-danger">Cancel</a>
-        {% endif %}
-    {% endif %}
-
-</div>
-
 {% endblock %}

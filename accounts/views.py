@@ -303,6 +303,7 @@ class DashboardView(UserPassesTestMixin, View):
         recent_deals = SkillDeal.objects.filter(
             Q(provider=user) | Q(owner=user)
         ).order_by("-created_at")[:3]
+        print(recent_deals)
 
         # Unread messages
         unread_messages = Message.objects.filter(receiver=user, is_read=False).order_by(
