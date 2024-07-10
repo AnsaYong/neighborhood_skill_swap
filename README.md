@@ -60,7 +60,7 @@ The Neighborhood Skill Swap platform aims to facilitate skill exchange among nei
 - Django
 - Django REST Framework
 - Django Mixin for authentication
-- WebSockets (via Django Channels) for real-time communication
+- Python
 
 ### Database:
 
@@ -68,7 +68,27 @@ The Neighborhood Skill Swap platform aims to facilitate skill exchange among nei
 
 ## Setup and Installation
 
-- 
+### Prerequisites
+
+Before you begin, ensure you have the following installed on your system
+- Python 3.8+
+- Django 5
+- Git
+
+### Installation
+
+Follow these steps to set up and run the project locally:
+
+1. Clone the Repository
+2. Create and Activate Virtual Environment
+3. Install Dependencies
+4. Set Up Database
+5. Apply Migrations
+6. Create a Superuser
+7. Collect Static Files
+8. Run the Development Server
+
+Your application should now be running at `http://127.0.0.1:8000/`.
 
 ## License
 This project is licensed under the MIT License.
